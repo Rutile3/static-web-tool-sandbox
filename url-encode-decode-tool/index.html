@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ja" data-bs-theme="light">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>URLエンコード・デコードツール</title>
+    <meta name="description" content="URLエンコード・デコード（UTF-8 / Shift_JIS / EUC-JP / ISO-2022-JP対応）">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <header class="py-3 border-bottom bg-body">
+        <div class="container d-flex align-items-center justify-content-between">
+            <h1 class="h4 mb-0">URLエンコード・デコードツール</h1>
+            <div class="small text-secondary">
+                ⚠️ 開発途中：動作を保証しません。自己責任でご利用ください。
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-4">
+        <!-- Encoding Selector -->
+        <section class="mb-3">
+            <label class="form-label fw-semibold">文字コード</label>
+            <div class="btn-group" role="group" aria-label="Encoding selector" id="encodingGroup"
+                aria-describedby="encHelp">
+                <input type="radio" class="btn-check" name="enc" id="encUtf8" autocomplete="off" value="UTF8" checked>
+                <label class="btn btn-outline-primary" for="encUtf8">UTF-8</label>
+
+                <input type="radio" class="btn-check" name="enc" id="encSjis" autocomplete="off" value="SJIS">
+                <label class="btn btn-outline-primary" for="encSjis">Shift_JIS</label>
+
+                <input type="radio" class="btn-check" name="enc" id="encEuc" autocomplete="off" value="EUCJP">
+                <label class="btn btn-outline-primary" for="encEuc">EUC-JP</label>
+
+                <input type="radio" class="btn-check" name="enc" id="encJis" autocomplete="off" value="JIS">
+                <label class="btn btn-outline-primary" for="encJis">ISO-2022-JP</label>
+            </div>
+            <div id="encHelp" class="form-text">
+                日本語を含むURLクエリを他のシステムに渡す時などに切り替えて使ってね。
+            </div>
+        </section>
+
+        <!-- Options -->
+        <section class="mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center fw-semibold">
+                    <span>記号の変換（%エンコード）オプション</span>
+                    <button id="btnPresetJS" class="btn btn-sm btn-outline-secondary">JS標準互換</button>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2 small text-secondary">
+                        チェックを入れると <code>%HH</code> に変換します。未チェックは「そのまま残す」です。
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input opt-chk" type="checkbox" id="optAsterisk" data-char="*">
+                                <label class="form-check-label" for="optAsterisk">*</label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input opt-chk" type="checkbox" id="optHyphen" data-char="-">
+                                <label class="form-check-label" for="optHyphen">-</label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input opt-chk" type="checkbox" id="optPeriod" data-char=".">
+                                <label class="form-check-label" for="optPeriod">.</label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input opt-chk" type="checkbox" id="optUnderscore"
+                                    data-char="_">
+                                <label class="form-check-label" for="optUnderscore">_</label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input opt-chk" type="checkbox" id="optTilde" data-char="~">
+                                <label class="form-check-label" for="optTilde">~</label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input opt-chk" type="checkbox" id="optSlash" data-char="/">
+                                <label class="form-check-label" for="optSlash">/</label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input opt-chk" type="checkbox" id="optQuestion" data-char="?">
+                                <label class="form-check-label" for="optQuestion">?</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-text mt-2">
+                        既定値：<code>/</code> と <code>?</code> はエンコード（チェックON）。その他は非エンコード（チェックOFF）。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Text Areas -->
+        <section class="mb-3">
+            <div class="row g-3">
+                <div class="col-12 col-lg-6">
+                    <label for="inputText" class="form-label fw-semibold">入力</label>
+                    <textarea id="inputText" class="form-control" rows="10" placeholder="ここにテキストやURLを入力…"></textarea>
+                    <div class="form-text">
+                        Enterでエンコード、Ctrl(⌘)+Enterでデコードできます。
+                    </div>
+                    <div class="d-flex gap-2 mt-2">
+                        <button id="btnEncode" class="btn btn-primary">エンコード →</button>
+                        <button id="btnDecode" class="btn btn-outline-primary">デコード →</button>
+                        <button id="btnSwap" class="btn btn-outline-secondary">上下入れ替え</button>
+                        <button id="btnClear" class="btn btn-outline-danger">クリア</button>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <label for="outputText" class="form-label fw-semibold">出力</label>
+                    <textarea id="outputText" class="form-control" rows="10" placeholder="結果がここに表示されます"
+                        readonly></textarea>
+                    <div class="d-flex gap-2 mt-2">
+                        <button id="btnCopy" class="btn btn-success">コピー</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <details class="small">
+                <summary class="mb-2">このツールの仕様メモ</summary>
+                <ul class="mb-0">
+                    <li>バイト列への変換は選択したエンコーディングで実施し、<code>%HH</code> 形式に展開します。</li>
+                    <li>「変換しない」記号はプレーンASCIIとしてそのまま残します（例：<code>/</code> 未チェックならスラッシュはそのまま）。</li>
+                    <li>不正な <code>%</code> シーケンスは可能な限り原文を保持して復元します。</li>
+                </ul>
+            </details>
+        </section>
+    </main>
+
+    <footer class="py-4 border-top">
+        <div class="container small text-secondary">
+            © 2025 URL Encode/Decode Tool — crafted by Rutile3。
+        </div>
+    </footer>
+
+    <!-- encoding-japanese (文字コード変換) -->
+    <script src="https://cdn.jsdelivr.net/npm/encoding-japanese@2.2.0/encoding.min.js"></script>
+    <script src="./app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

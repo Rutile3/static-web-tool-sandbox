@@ -12,7 +12,7 @@
 ### 生産ライン計算＆レシピ可視化ツール
 
 - [factory-planner](https://rutile3.github.io/static-web-tool-sandbox/factory-planner/)
-- 工場自動化ゲーム（例：Factorio / Satisfactory / shapez / Immortality Factory など）のアイテム生産量計算とレシピ構造の可視化 を支援するWebツールです。
+- 工場自動化ゲーム（例：Factorio / Satisfactory / shapez / Immortality Factory など）のアイテム生産量計算とレシピ構造の可視化を支援するWebツールです。
 - 動作不安定
 
 ### かな → ローマ字 変換ツール
@@ -33,7 +33,14 @@
 ### PNGタイルセット生成ツール
 
 - [tileset-maker](https://rutile3.github.io/static-web-tool-sandbox/tileset-maker/)
-- 複数の PNG画像ファイル を読み込み、1枚の タイルセット画像（スプライトアトラス） に結合するWebツールです。
+- 複数の **PNG画像ファイル** を読み込み、1枚の タイルセット画像（スプライトアトラス） に結合するWebツールです。
+
+### URLエンコード・デコードツール
+
+- [url-encode-decode-tool](https://rutile3.github.io/static-web-tool-sandbox/url-encode-decode-tool/)
+- 文字コードを指定してURLエンコード・デコードツール
+
+
 
 ---
 

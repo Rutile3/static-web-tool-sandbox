@@ -1,0 +1,22 @@
+:root {
+    --radius: 1rem;
+}
+
+textarea {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.card,
+.form-control,
+.btn,
+.btn-group>.btn {
+    border-radius: var(--radius);
+}
+
+header .h4 {
+    letter-spacing: .2px;
+}
+
+#outputText[readonly] {
+    background: var(--bs-tertiary-bg);
+}
