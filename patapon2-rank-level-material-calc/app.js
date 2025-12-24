@@ -6,6 +6,7 @@
   // -----------------------------
   const RAREPON_MASTER_JSON_PATH = "./data/rarepon_master.json";
   const PATAPON_MASTER_JSON_PATH = "./data/patapon_master.json";
+  const MATERIAL_MASTER_JSON_PATH = "./data/material_master.json";
 
   // 素材ごとの要求開始レベル（ゲーム仕様）
   // 素材1/2: Lv1から、素材3: Lv3から、素材4: Lv6から
@@ -110,6 +111,12 @@
     return await res.json();
   }
 
+  async function loadMaterialMaster() {
+    const res = await fetch(MATERIAL_MASTER_JSON_PATH, { cache: "no-cache" });
+    if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
+    return await res.json();
+  }
+
   // -----------------------------
   // UI
   // -----------------------------
@@ -143,6 +150,13 @@
       opt.textContent = name;
       selectEl.appendChild(opt);
     });
+  }
+
+  function getMaterialName(materialMaster, materialType, rank) {
+    if (!materialMaster) return "";
+    const mat = materialMaster[String(materialType)];
+    if (!mat || !mat.ranks) return "";
+    return mat.ranks[String(rank)] || "";
   }
 
   function setResultTable(rows) {
@@ -213,10 +227,12 @@
     // マスタ読み込み → れあポンセレクト構築
     let rareponMaster;
     let pataponMaster;
+    let materialMaster;
     try {
-      [rareponMaster, pataponMaster] = await Promise.all([
+      [rareponMaster, pataponMaster, materialMaster] = await Promise.all([
         loadRareponMaster(),
         loadPataponMaster(),
+        loadMaterialMaster(),
       ]);
       fillRareponSelect(rareponSel, rareponMaster);
       fillPataponSelect(pataponSel, pataponMaster);
@@ -256,9 +272,11 @@
           const startLv = MATERIAL_START_LEVELS[i];
           const need = requiredMaterialBetween(rank, startLv, cur, tgt);
           if (need <= 0) continue;
+          const matType = patConf.materials[i];
+          const matName = getMaterialName(materialMaster, matType, rank);
           rows.push({
-            label: `素材${i + 1}（${patConf.materials[i]}）`,
-            rankOrBase: `R${rank}`,
+            label: `素材${i + 1}（${matType}）`,
+            rankOrBase: matName ? `R${rank}（${matName}）` : `R${rank}`,
             need,
           });
         }
