@@ -25,6 +25,11 @@
 - [patapon2-rank-level-material-calc](https://rutile3.github.io/static-web-tool-sandbox/patapon2-rank-level-material-calc/)
 - パタポン2で「れあポン」を作成する際に必要な素材数を、ランクとレベルから算出するツールです。
 
+### PNGタイルセット生成ツール
+
+- [tileset-maker](https://rutile3.github.io/static-web-tool-sandbox/tileset-maker/)
+- 複数の PNG画像ファイル を読み込み、1枚の タイルセット画像（スプライトアトラス） に結合するWebツールです。
+
 ---
 
 ## ライセンス
