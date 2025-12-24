@@ -159,6 +159,23 @@
     return mat.ranks[String(rank)] || "";
   }
 
+  // ランクに応じた文字色（ランク1はデフォルト）
+  function rankToColor(rank) {
+    switch (Number(rank)) {
+      case 2:
+        return "green";
+      case 3:
+        return "red";
+      case 4:
+        return "orange";
+      case 5:
+        return "purple";
+      default:
+        return null;
+    }
+  }
+
+
   function setResultTable(rows) {
     const tbody = $("resultTableBody");
     if (!tbody) return;
@@ -183,6 +200,9 @@
       td1.className = "text-center";
       td1.textContent = r.name;
 
+
+      const c = rankToColor(r.rank);
+      if (c) td1.style.color = c;
       const td2 = document.createElement("td");
       td2.className = "text-center";
       td2.textContent = String(r.need);
@@ -196,8 +216,7 @@
   function setError(message) {
     setResultTable([
       {
-        label: "エラー",
-        rankOrBase: "-",
+        name: "エラー",
         need: message || "計算に失敗しました",
       },
     ]);
@@ -271,9 +290,9 @@
           if (need <= 0) continue;
           const matType = patConf.materials[i];
           const matName = getMaterialName(materialMaster, matType, rank);
-          rows.push({
-            // 素材名はマスタから取得（見つからない場合は種類名でフォールバック）
+          rows.push({// 素材名はマスタから取得（見つからない場合は種類名でフォールバック）
             name: matName || `素材${i + 1}（${matType}）`,
+            rank,
             need,
           });
         }
@@ -287,6 +306,7 @@
         const multLabel = Number.isFinite(mult) ? String(mult) : "1";
         rows.push({
           name: "チャリン",
+          rank: null,
           need: needCharin,
         });
 
