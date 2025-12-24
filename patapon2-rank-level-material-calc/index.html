@@ -31,19 +31,23 @@
                                 <select id="rank" class="form-select"></select>
                             </div>
                             <div class="col-6">
-                                <label for="level" class="form-label">レベル</label>
-                                <select id="level" class="form-select"></select>
+                                <label for="curLevel" class="form-label">現在レベル</label>
+                                <select id="curLevel" class="form-select"></select>
+                            </div>
+                            <div class="col-6">
+                                <label for="tgtLevel" class="form-label">目標レベル</label>
+                                <select id="tgtLevel" class="form-select"></select>
                             </div>
                             <div class="col-12 d-grid">
                                 <button id="btnCalc" class="btn btn-primary" type="button">計算</button>
                             </div>
                         </div>
                         <hr>
-                        <label for="result" class="form-label">必要数（レベル1からの合計）</label>
+                        <label for="result" class="form-label">必要数（現在→目標の差分）</label>
                         <output id="result" class="form-control" aria-live="polite">-</output>
                         <div class="form-text">
-                            計算式: 合計 = r * q * (q + 1) / 2 + m * (q + 1)
-                            （q = ⌊L / r⌋, m = L mod r）
+                            計算式: 必要数 = S(r, 目標L) − S(r, 現在L)
+                            （S(r, L) = r * q * (q + 1) / 2 + m * (q + 1), q = ⌊L / r⌋, m = L mod r）
                         </div>
                     </div>
                 </div>
@@ -55,8 +59,9 @@
                     <div class="card-body">
                         <ul class="mb-0">
                             <li>ランク: 1〜5</li>
-                            <li>レベル: 1〜10</li>
-                            <li>「計算」で、指定レベルまでの累積要求数を算出します。</li>
+                            <li>現在レベル: 0〜10</li>
+                            <li>目標レベル: 1〜10</li>
+                            <li>「計算」で、現在→目標の差分（必要数）を算出します。</li>
                         </ul>
                     </div>
                 </div>
