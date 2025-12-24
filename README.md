@@ -25,6 +25,11 @@
 - [patapon2-rank-level-material-calc](https://rutile3.github.io/static-web-tool-sandbox/patapon2-rank-level-material-calc/)
 - パタポン2で「れあポン」を作成する際に必要な素材数を、ランクとレベルから算出するツールです。
 
+### 楽天証券CSV 取得額（元本）遷移ビューア
+
+- [principal-tracker](https://rutile3.github.io/static-web-tool-sandbox/principal-tracker/)
+- 楽天証券でダウンロードできる 国内株式の取引履歴CSV から、株式投資の 取得額（投下元本）の時系列遷移 を算出・可視化するためのWebツールです。
+
 ### PNGタイルセット生成ツール
 
 - [tileset-maker](https://rutile3.github.io/static-web-tool-sandbox/tileset-maker/)

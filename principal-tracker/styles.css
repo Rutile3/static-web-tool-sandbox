@@ -1,0 +1,26 @@
+body {
+    letter-spacing: 0.01em;
+}
+
+.metric .label {
+    font-size: .875rem;
+    color: #6c757d;
+}
+
+.metric .value {
+    font-size: 1.35rem;
+    font-weight: 600;
+}
+
+table td,
+table th {
+    white-space: nowrap;
+}
+
+.badge-small {
+    font-size: .75rem;
+}
+
+#alert .alert {
+    margin-bottom: 0;
+}
