@@ -95,7 +95,7 @@ factory-planner/
 ## 📜 ライセンス
 
 MIT License  
-Copyright © 2025 月城アリア
+Copyright © 2025 Rutile3
 
 ---
 

@@ -1,4 +1,4 @@
-// 月城アリアのタイル鍋へようこそ。材料（PNG）を放り込んで、きれいに並べて仕上げます。
+// 材料（PNG）を放り込んで、きれいに並べて仕上げます。
 
 const els = {
     dropzone: document.getElementById('dropzone'),
