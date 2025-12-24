@@ -2,7 +2,7 @@
   'use strict';
 
   // ------------------------------------------------------------
-  // 数学ロジック
+  // 数学ロジック（素材）
   // ------------------------------------------------------------
 
   /**
@@ -57,20 +57,19 @@
    * ランク r、素材 materialNo、現在レベル cur、目標レベル tgt から
    * 「cur→tgt に必要な素材数」を求める。
    *
-   * 仕様（ユーザー想定）:
+   * 仕様:
    *  - 素材が解禁されたレベル(startLv)から要求が始まる
    *  - その素材の要求数は「解禁レベルを1としてカウント」する
    *
-   * したがって、元のレベルをそのまま使うのではなく
-   * 有効レベル(cur', tgt')に変換して差分を取る。
-   *
    * need = S(r, tgt') - S(r, cur')
+   *  - cur' = effectiveLevel(cur, startLv)
+   *  - tgt' = effectiveLevel(tgt, startLv)
    */
-  function requiredBetweenWithMaterial(r, materialNo, cur, tgt) {
+  function requiredMaterialBetween(r, materialNo, cur, tgt) {
     if (![cur, tgt].every(Number.isInteger)) throw new Error('level は整数である必要があります');
     if (cur < 0 || tgt < 0) throw new Error('level は0以上である必要があります');
 
-    // 入力が逆でも破綻しないように正規化
+    // 入力が逆でも破綻しないように正規化（差分量は同じ）
     const lo = Math.min(cur, tgt);
     const hi = Math.max(cur, tgt);
 
@@ -83,18 +82,51 @@
   }
 
   // ------------------------------------------------------------
+  // 数学ロジック（チャリン）
+  // ------------------------------------------------------------
+
+  /**
+   * 0〜n の和（n>=0）
+   */
+  function sum1to(n) {
+    if (!Number.isInteger(n) || n < 0) throw new Error('n は0以上の整数である必要があります');
+    return (n * (n + 1)) / 2;
+  }
+
+  /**
+   * チャリン基準額 base と現在レベル cur / 目標レベル tgt から、
+   * 「cur→tgt に必要なチャリン」を求める。
+   *
+   * 仕様:
+   *  - レベルkへのアップに必要なチャリンは base * k
+   *  - したがって cur→tgt は base * ( (cur+1) + ... + tgt )
+   *
+   * needCharin = base * (sum1to(tgt) - sum1to(cur))
+   */
+  function requiredCharinBetween(base, cur, tgt) {
+    if (!Number.isInteger(base) || base < 0) throw new Error('base は0以上の整数である必要があります');
+    if (![cur, tgt].every(Number.isInteger)) throw new Error('level は整数である必要があります');
+    if (cur < 0 || tgt < 0) throw new Error('level は0以上である必要があります');
+
+    const lo = Math.min(cur, tgt);
+    const hi = Math.max(cur, tgt);
+
+    if (hi <= lo) return 0;
+    return base * (sum1to(hi) - sum1to(lo));
+  }
+
+  // ------------------------------------------------------------
   // UI
   // ------------------------------------------------------------
 
   const $ = (id) => document.getElementById(id);
 
-  function setResult(text) {
-    const el = $('result');
+  function setText(id, text) {
+    const el = $(id);
     if (el) el.textContent = text;
   }
 
   function fillSelectRange(selectEl, start, end) {
-    // start..end をすべて追加
     selectEl.innerHTML = '';
     for (let i = start; i <= end; i++) {
       const opt = document.createElement('option');
@@ -104,46 +136,62 @@
     }
   }
 
+  function fillSelectList(selectEl, values) {
+    selectEl.innerHTML = '';
+    for (const v of values) {
+      const opt = document.createElement('option');
+      opt.value = String(v);
+      opt.textContent = String(v);
+      selectEl.appendChild(opt);
+    }
+  }
+
   function init() {
+    const materialSel = $('material');
     const rankSel = $('rank');
+    const charinSel = $('charin');
     const curSel = $('curLevel');
     const tgtSel = $('tgtLevel');
 
-    // 素材セレクト（存在する場合のみ初期化）
-    const materialSel = $('material');
-
-    if (!rankSel || !curSel || !tgtSel) {
-      console.error('必須の入力要素(rank/curLevel/tgtLevel)が見つかりません');
+    if (!materialSel || !rankSel || !charinSel || !curSel || !tgtSel) {
+      console.error('必須の入力要素(material/rank/charin/curLevel/tgtLevel)が見つかりません');
       return;
     }
 
+    fillSelectRange(materialSel, 1, 4);
     fillSelectRange(rankSel, 1, 5);
+    fillSelectList(charinSel, [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]);
     fillSelectRange(curSel, 0, 10);
     fillSelectRange(tgtSel, 1, 10);
 
-    if (materialSel) {
-      fillSelectRange(materialSel, 1, 4);
-      materialSel.value = '1';
-    }
-
-    // 初期値
+    // 初期値（任意）
+    materialSel.value = '1';
     rankSel.value = '1';
+    charinSel.value = '35';
     curSel.value = '0';
     tgtSel.value = '10';
 
+    const reset = () => {
+      setText('materialResult', '-');
+      setText('charinResult', '-');
+    };
+
     const calcAndRender = () => {
+      const materialNo = parseInt(materialSel.value, 10);
       const rank = parseInt(rankSel.value, 10);
+      const base = parseInt(charinSel.value, 10);
       const cur = parseInt(curSel.value, 10);
       const tgt = parseInt(tgtSel.value, 10);
 
-      // material が無ければ素材1扱い（旧UI互換）
-      const materialNo = materialSel ? parseInt(materialSel.value, 10) : 1;
-
       try {
-        const need = requiredBetweenWithMaterial(rank, materialNo, cur, tgt);
-        setResult(String(need));
+        const needMat = requiredMaterialBetween(rank, materialNo, cur, tgt);
+        const needCharin = requiredCharinBetween(base, cur, tgt);
+
+        setText('materialResult', String(needMat));
+        setText('charinResult', String(needCharin));
       } catch (e) {
-        setResult('エラー');
+        setText('materialResult', 'エラー');
+        setText('charinResult', 'エラー');
         console.error(e);
       }
     };
@@ -151,16 +199,13 @@
     const btn = $('btnCalc');
     if (btn) btn.addEventListener('click', calcAndRender);
 
-    // UX: セレクト変更で結果を一旦リセット（押下計算を基本とする）
-    const reset = () => setResult('-');
+    materialSel.addEventListener('change', reset);
     rankSel.addEventListener('change', reset);
+    charinSel.addEventListener('change', reset);
     curSel.addEventListener('change', reset);
     tgtSel.addEventListener('change', reset);
-    if (materialSel) materialSel.addEventListener('change', reset);
 
-    // 初回表示（テンプレによっては自動計算したい場合があるため）
-    // 要件的に「ボタンで計算」なので結果は '-' で開始
-    setResult('-');
+    reset();
   }
 
   document.addEventListener('DOMContentLoaded', init);
