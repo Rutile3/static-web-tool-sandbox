@@ -10,6 +10,12 @@ body {
     background: #efefef;
 }
 
+/* md の最大幅（Bootstrap既定は 720px）で打ち止め */
+main.container-md {
+  max-width: 720px;
+}
+
+
 output.form-control {
     display: block;
     background: #fff;
