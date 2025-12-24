@@ -1,0 +1,27 @@
+:root {
+    --brand: rgba(219, 169, 39, .8);
+}
+
+.bg-brand {
+    background: var(--brand);
+}
+
+body {
+    background: #efefef;
+}
+
+output.form-control {
+    display: block;
+    background: #fff;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Roboto Mono",
+        "Source Code Pro", "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace;
+}
+
+.small {
+    font-size: .9rem;
+}
