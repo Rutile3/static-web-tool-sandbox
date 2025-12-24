@@ -21,7 +21,7 @@
 
     <main class="container my-4">
         <div class="row g-4">
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light fw-semibold">入力</div>
                     <div class="card-body">
@@ -51,7 +51,15 @@
                             </div>
                         </div>
 
-                        <hr>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-semibold">出力</div>
+                    <div class="card-body">
                         <label class="form-label">必要素材数</label>
                         <output id="materialResult" class="form-control" aria-live="polite">-</output>
 
@@ -59,19 +67,11 @@
 
                         <label class="form-label">必要チャリン</label>
                         <output id="charinResult" class="form-control" aria-live="polite">-</output>
-                        <div class="form-text">
-                            計算式<br>
-                            ・必要素材数 = S(ランク, 目標レベル) − S(ランク, 現在レベル)<br>
-                            　・S(r, L) = r * q * (q + 1) / 2 + m * (q + 1)<br>
-                            　　・q = floor(L / r)<br>
-                            　　・m = L % r<br>
-                            ・必要チャリン = base × ( (現在レベル+1)+…+目標レベル )<br>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light fw-semibold">メモ</div>
                     <div class="card-body">
@@ -83,6 +83,15 @@
                             <li>目標レベル: 1〜10</li>
                             <li>「計算」で、現在→目標の差分（必要数）を算出します。</li>
                         </ul>
+                        <hr>
+                        <div class="form-text">
+                            <div class="fw-semibold mb-1">計算式</div>
+                            <div>・必要素材数 = S(ランク, 目標レベル) − S(ランク, 現在レベル)</div>
+                            <div>　・S(r, L) = r * q * (q + 1) / 2 + m * (q + 1)</div>
+                            <div>　　・q = floor(L / r)</div>
+                            <div>　　・m = L % r</div>
+                            <div class="mt-2">・必要チャリン = base × ( (現在レベル+1)+…+目標レベル )</div>
+                        </div>
                     </div>
                 </div>
             </div>
