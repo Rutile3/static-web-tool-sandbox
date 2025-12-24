@@ -1,52 +1,43 @@
 (() => {
-  'use strict';
+  "use strict";
 
-  // ------------------------------------------------------------
-  // 数学ロジック（素材）
-  // ------------------------------------------------------------
+  // -----------------------------
+  // 設定
+  // -----------------------------
+  const MASTER_JSON_PATH = "./data/rarepon.json";
+
+  // 素材ごとの要求開始レベル（ゲーム仕様）
+  // 素材1/2: Lv1から、素材3: Lv3から、素材4: Lv6から
+  const MATERIAL_START_LEVELS = [1, 1, 3, 6];
+
+  // -----------------------------
+  // 数学ロジック
+  // -----------------------------
 
   /**
-   * ランク r とレベル L(0以上) から「レベル1〜Lの累積要求数 S(r,L)」を求める。
-   * ループなし（閉形式）:
-   *   q = floor(L / r)
-   *   m = L % r
-   *   S = r * q * (q + 1) / 2 + m * (q + 1)
+   * ランク rank とレベル level(0以上) から「レベル1〜levelの累積要求数 S(level,level)」を求める。
+   * （各レベル i の要求数 = ceil(i / r) という法則を閉形式で計算）
+   *
+   * q = floor(level / rank)
+   * m = level % rank
+   * S = rank * q * (q + 1) / 2 + m * (q + 1)
    */
-  function cumulativeRequired(r, L) {
-    if (!Number.isInteger(r) || r <= 0) throw new Error('rank は正の整数である必要があります');
-    if (!Number.isInteger(L) || L < 0) throw new Error('level は0以上の整数である必要があります');
+  function cumulativeRequired(rank, level) {
+    if (!Number.isInteger(rank) || rank <= 0)
+      throw new Error("rank は正の整数である必要があります");
+    if (!Number.isInteger(level) || level < 0)
+      throw new Error("level は0以上の整数である必要があります");
 
-    const q = Math.floor(L / r);
-    const m = L % r;
-    return (r * q * (q + 1)) / 2 + m * (q + 1);
+    const q = Math.floor(level / rank);
+    const m = level % rank;
+    return (rank * q * (q + 1)) / 2 + m * (q + 1);
   }
 
   /**
-   * 素材番号(1〜4)に応じた「要求開始レベル」を返す。
-   *  - 素材1/2: Lv1から
-   *  - 素材3  : Lv3から
-   *  - 素材4  : Lv6から
-   */
-  function materialStartLevel(materialNo) {
-    switch (materialNo) {
-      case 1:
-      case 2:
-        return 1;
-      case 3:
-        return 3;
-      case 4:
-        return 6;
-      default:
-        // 未指定・不正値は安全側で「Lv1から」として扱う
-        return 1;
-    }
-  }
-
-  /**
-   * 「その素材にとっての有効レベル」に変換する。
+   * 「素材が解禁される開始レベル(startLv)」に対して、レベルを有効レベルに変換する。
    * 例: startLv=3 のとき
    *  - level=0..2 => 0
-   *  - level=3    => 1
+   *  - level=3    => 1（ここで1からカウント開始）
    *  - level=10   => 8
    */
   function effectiveLevel(level, startLv) {
@@ -54,159 +45,228 @@
   }
 
   /**
-   * ランク r、素材 materialNo、現在レベル cur、目標レベル tgt から
-   * 「cur→tgt に必要な素材数」を求める。
-   *
-   * 仕様:
-   *  - 素材が解禁されたレベル(startLv)から要求が始まる
-   *  - その素材の要求数は「解禁レベルを1としてカウント」する
-   *
-   * need = S(r, tgt') - S(r, cur')
-   *  - cur' = effectiveLevel(cur, startLv)
-   *  - tgt' = effectiveLevel(tgt, startLv)
+   * ランク rank、素材startLv、現在レベル cur、目標レベル tgt から必要素材数を求める。
+   * need = S(rank, tgt') - S(rank, cur')
+   * ただし cur' / tgt' は startLv を原点にした有効レベル
    */
-  function requiredMaterialBetween(r, materialNo, cur, tgt) {
-    if (![cur, tgt].every(Number.isInteger)) throw new Error('level は整数である必要があります');
-    if (cur < 0 || tgt < 0) throw new Error('level は0以上である必要があります');
+  function requiredMaterialBetween(rank, startLv, cur, tgt) {
+    if (![rank, startLv, cur, tgt].every(Number.isInteger))
+      throw new Error("入力は整数である必要があります");
+    if (rank <= 0) throw new Error("rank は1以上である必要があります");
+    if (startLv <= 0) throw new Error("startLv は1以上である必要があります");
+    if (cur < 0 || tgt < 0)
+      throw new Error("level は0以上である必要があります");
 
-    // 入力が逆でも破綻しないように正規化（差分量は同じ）
     const lo = Math.min(cur, tgt);
     const hi = Math.max(cur, tgt);
 
-    const startLv = materialStartLevel(materialNo);
     const curEff = effectiveLevel(lo, startLv);
     const tgtEff = effectiveLevel(hi, startLv);
 
     if (tgtEff <= curEff) return 0;
-    return cumulativeRequired(r, tgtEff) - cumulativeRequired(r, curEff);
+    return cumulativeRequired(rank, tgtEff) - cumulativeRequired(rank, curEff);
   }
 
-  // ------------------------------------------------------------
-  // 数学ロジック（チャリン）
-  // ------------------------------------------------------------
-
   /**
-   * 0〜n の和（n>=0）
+   * 三角数 T(n)=1+2+...+n（n>=0）
    */
-  function sum1to(n) {
-    if (!Number.isInteger(n) || n < 0) throw new Error('n は0以上の整数である必要があります');
+  function tri(n) {
+    if (!Number.isInteger(n) || n < 0)
+      throw new Error("tri の引数は0以上の整数が必要です");
     return (n * (n + 1)) / 2;
   }
 
   /**
-   * チャリン基準額 base と現在レベル cur / 目標レベル tgt から、
-   * 「cur→tgt に必要なチャリン」を求める。
-   *
-   * 仕様:
-   *  - レベルkへのアップに必要なチャリンは base * k
-   *  - したがって cur→tgt は base * ( (cur+1) + ... + tgt )
-   *
-   * needCharin = base * (sum1to(tgt) - sum1to(cur))
+   * チャリン必要数：base × ((lo+1)+...+hi)
    */
   function requiredCharinBetween(base, cur, tgt) {
-    if (!Number.isInteger(base) || base < 0) throw new Error('base は0以上の整数である必要があります');
-    if (![cur, tgt].every(Number.isInteger)) throw new Error('level は整数である必要があります');
-    if (cur < 0 || tgt < 0) throw new Error('level は0以上である必要があります');
+    if (!Number.isInteger(base) || base < 0)
+      throw new Error("base は0以上の整数が必要です");
+    if (!Number.isInteger(cur) || !Number.isInteger(tgt))
+      throw new Error("level は整数である必要があります");
+    if (cur < 0 || tgt < 0)
+      throw new Error("level は0以上の整数である必要があります");
 
     const lo = Math.min(cur, tgt);
     const hi = Math.max(cur, tgt);
 
-    if (hi <= lo) return 0;
-    return base * (sum1to(hi) - sum1to(lo));
+    // (lo+1)+...+hi = T(hi) - T(lo)
+    return base * (tri(hi) - tri(lo));
   }
 
-  // ------------------------------------------------------------
-  // UI
-  // ------------------------------------------------------------
+  // -----------------------------
+  // マスタ読み込み
+  // -----------------------------
+  async function loadRareponMaster() {
+    const res = await fetch(MASTER_JSON_PATH, { cache: "no-cache" });
+    if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
+    return await res.json();
+  }
 
+  // -----------------------------
+  // UI
+  // -----------------------------
   const $ = (id) => document.getElementById(id);
 
-  function setText(id, text) {
-    const el = $(id);
-    if (el) el.textContent = text;
-  }
-
   function fillSelectRange(selectEl, start, end) {
-    selectEl.innerHTML = '';
+    selectEl.innerHTML = "";
     for (let i = start; i <= end; i++) {
-      const opt = document.createElement('option');
+      const opt = document.createElement("option");
       opt.value = String(i);
       opt.textContent = String(i);
       selectEl.appendChild(opt);
     }
   }
 
-  function fillSelectList(selectEl, values) {
-    selectEl.innerHTML = '';
-    for (const v of values) {
-      const opt = document.createElement('option');
-      opt.value = String(v);
-      opt.textContent = String(v);
+  function fillRareponSelect(selectEl, master) {
+    selectEl.innerHTML = "";
+    Object.keys(master).forEach((name) => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
       selectEl.appendChild(opt);
-    }
+    });
   }
 
-  function init() {
-    const materialSel = $('material');
-    const rankSel = $('rank');
-    const charinSel = $('charin');
-    const curSel = $('curLevel');
-    const tgtSel = $('tgtLevel');
+  function setResultTable(rows) {
+    const tbody = $("resultTableBody");
+    if (!tbody) return;
 
-    if (!materialSel || !rankSel || !charinSel || !curSel || !tgtSel) {
-      console.error('必須の入力要素(material/rank/charin/curLevel/tgtLevel)が見つかりません');
+    tbody.innerHTML = "";
+
+    if (!rows || rows.length === 0) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 3;
+      td.className = "text-muted";
+      td.textContent = "-";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
       return;
     }
 
-    fillSelectRange(materialSel, 1, 4);
-    fillSelectRange(rankSel, 1, 5);
-    fillSelectList(charinSel, [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]);
-    fillSelectRange(curSel, 0, 10);
+    for (const r of rows) {
+      const tr = document.createElement("tr");
+
+      const td1 = document.createElement("td");
+      td1.textContent = r.label;
+
+      const td2 = document.createElement("td");
+      td2.textContent = r.rankOrBase;
+
+      const td3 = document.createElement("td");
+      td3.className = "text-end";
+      td3.textContent = String(r.need);
+
+      tr.appendChild(td1);
+      tr.appendChild(td2);
+      tr.appendChild(td3);
+      tbody.appendChild(tr);
+    }
+  }
+
+  function setError(message) {
+    setResultTable([
+      {
+        label: "エラー",
+        rankOrBase: "-",
+        need: message || "計算に失敗しました",
+      },
+    ]);
+  }
+
+  async function init() {
+    const rareponSel = $("rarepon");
+    const curSel = $("curLevel");
+    const tgtSel = $("tgtLevel");
+    const btn = $("btnCalc");
+
+    if (!rareponSel || !curSel || !tgtSel || !btn) {
+      console.error(
+        "必須の要素が見つかりません（rarepon/curLevel/tgtLevel/btnCalc）"
+      );
+      return;
+    }
+
+    // レベル選択肢
+    fillSelectRange(curSel, 0, 9);
     fillSelectRange(tgtSel, 1, 10);
 
-    // 初期値（任意）
-    materialSel.value = '1';
-    rankSel.value = '1';
-    charinSel.value = '35';
-    curSel.value = '0';
-    tgtSel.value = '10';
+    // マスタ読み込み → れあポンセレクト構築
+    let master;
+    try {
+      master = await loadRareponMaster();
+      fillRareponSelect(rareponSel, master);
+    } catch (e) {
+      console.error(e);
+      setError("マスタ読み込み失敗");
+      return;
+    }
 
-    const reset = () => {
-      setText('materialResult', '-');
-      setText('charinResult', '-');
-    };
+    // 初期値
+    curSel.value = "0";
+    tgtSel.value = "10";
+    if (rareponSel.options.length > 0) rareponSel.selectedIndex = 0;
 
     const calcAndRender = () => {
-      const materialNo = parseInt(materialSel.value, 10);
-      const rank = parseInt(rankSel.value, 10);
-      const base = parseInt(charinSel.value, 10);
-      const cur = parseInt(curSel.value, 10);
-      const tgt = parseInt(tgtSel.value, 10);
-
       try {
-        const needMat = requiredMaterialBetween(rank, materialNo, cur, tgt);
-        const needCharin = requiredCharinBetween(base, cur, tgt);
+        const rareponName = rareponSel.value;
+        const cur = parseInt(curSel.value, 10);
+        const tgt = parseInt(tgtSel.value, 10);
 
-        setText('materialResult', String(needMat));
-        setText('charinResult', String(needCharin));
+        const conf = master[rareponName];
+        if (!conf) throw new Error("れあポン設定が見つかりません");
+
+        const materials = conf.materials;
+        const baseCharin = conf.charin;
+
+        const rows = [];
+
+        // 素材1〜4
+        for (let i = 0; i < 4; i++) {
+          const rank = parseInt(materials[i], 10);
+          const startLv = MATERIAL_START_LEVELS[i];
+          const need = requiredMaterialBetween(rank, startLv, cur, tgt);
+          if (need <= 0) continue;
+          rows.push({
+            label: `素材${i + 1}`,
+            rankOrBase: `R${rank}`,
+            need,
+          });
+        }
+
+        // チャリン
+        const needCharin = requiredCharinBetween(
+          parseInt(baseCharin, 10),
+          cur,
+          tgt
+        );
+        rows.push({
+          label: "チャリン",
+          rankOrBase: String(baseCharin),
+          need: needCharin,
+        });
+
+        setResultTable(rows);
       } catch (e) {
-        setText('materialResult', 'エラー');
-        setText('charinResult', 'エラー');
         console.error(e);
+        setError("計算失敗");
       }
     };
 
-    const btn = $('btnCalc');
-    if (btn) btn.addEventListener('click', calcAndRender);
+    btn.addEventListener("click", calcAndRender);
 
-    materialSel.addEventListener('change', reset);
-    rankSel.addEventListener('change', reset);
-    charinSel.addEventListener('change', reset);
-    curSel.addEventListener('change', reset);
-    tgtSel.addEventListener('change', reset);
+    // UX: 変更したら表示をリセット
+    const reset = () => setResultTable([]);
+    rareponSel.addEventListener("change", reset);
+    curSel.addEventListener("change", reset);
+    tgtSel.addEventListener("change", reset);
 
-    reset();
+    // 初期表示は未計算
+    setResultTable([]);
   }
 
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener("DOMContentLoaded", () => {
+    init();
+  });
 })();

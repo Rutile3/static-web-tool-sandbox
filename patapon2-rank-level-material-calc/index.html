@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>【パタポン2】ランク・レベル要求素材数計算</title>
+    <title>【パタポン2】れあポン要求素材・チャリン計算</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -14,30 +14,24 @@
 <body>
     <header class="navbar navbar-dark bg-brand shadow-sm">
         <div class="container">
-            <span class="navbar-brand fw-bold">【パタポン2】ランク・レベル要求素材数計算</span>
+            <span class="navbar-brand fw-bold">【パタポン2】れあポン要求素材・チャリン計算</span>
             <span class="text-white-50 small ms-auto">by Rutile3</span>
         </div>
     </header>
 
     <main class="container-md my-4">
         <div class="row g-4">
-            <div class="col-md-12">
+            <!-- 入力 -->
+            <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light fw-semibold">入力</div>
                     <div class="card-body">
                         <div class="row g-3 align-items-end">
-                            <div class="col-4">
-                                <label for="material" class="form-label">素材</label>
-                                <select id="material" class="form-select"></select>
+                            <div class="col-12">
+                                <label for="rarepon" class="form-label">れあポン</label>
+                                <select id="rarepon" class="form-select"></select>
                             </div>
-                            <div class="col-4">
-                                <label for="rank" class="form-label">ランク</label>
-                                <select id="rank" class="form-select"></select>
-                            </div>
-                            <div class="col-4">
-                                <label for="charin" class="form-label">チャリン</label>
-                                <select id="charin" class="form-select"></select>
-                            </div>
+
                             <div class="col-6">
                                 <label for="curLevel" class="form-label">現在レベル</label>
                                 <select id="curLevel" class="form-select"></select>
@@ -46,52 +40,49 @@
                                 <label for="tgtLevel" class="form-label">目標レベル</label>
                                 <select id="tgtLevel" class="form-select"></select>
                             </div>
+
                             <div class="col-12 d-grid">
                                 <button id="btnCalc" class="btn btn-primary" type="button">計算</button>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-12">
+            <!-- 出力 -->
+            <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light fw-semibold">出力</div>
                     <div class="card-body">
-                        <label class="form-label">必要素材数</label>
-                        <output id="materialResult" class="form-control" aria-live="polite">-</output>
-
-                        <div class="mt-3"></div>
-
-                        <label class="form-label">必要チャリン</label>
-                        <output id="charinResult" class="form-control" aria-live="polite">-</output>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 35%;">項目</th>
+                                        <th style="width: 25%;">ランク/基準</th>
+                                        <th class="text-end">必要数</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultTableBody">
+                                    <tr>
+                                        <td colspan="3" class="text-muted">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-12">
+            <!-- メモ -->
+            <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light fw-semibold">メモ</div>
                     <div class="card-body">
                         <ul class="mb-0">
-                            <li>素材: 1〜4（素材3はLv3から、素材4はLv6から要求開始）</li>
-                            <li>ランク: 1〜5</li>
-                            <li>チャリン: 10〜60</li>
-                            <li>現在レベル: 0〜10</li>
-                            <li>目標レベル: 1〜10</li>
-                            <li>「計算」で、現在→目標の差分（必要数）を算出します。</li>
+                            <li>れあポンのマスタは <code>data/rarepon.json</code> に保持します。</li>
+                            <li>「計算」で、素材とチャリンの現在→目標の差分（必要数）を算出します。</li>
                         </ul>
-                        <hr>
-                        <div class="form-text">
-                            <div class="fw-semibold mb-1">計算式</div>
-                            <div>・必要素材数 = S(ランク, 目標レベル) − S(ランク, 現在レベル)</div>
-                            <div>　・S(r, L) = r * q * (q + 1) / 2 + m * (q + 1)</div>
-                            <div>　　・q = floor(L / r)</div>
-                            <div>　　・m = L % r</div>
-                            <div class="mt-2">・必要チャリン = base × ( (現在レベル+1)+…+目標レベル )</div>
-                        </div>
                     </div>
                 </div>
             </div>
