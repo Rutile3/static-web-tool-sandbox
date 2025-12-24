@@ -1,0 +1,46 @@
+:root {
+    --fp-node-default: #b9d4ff;
+}
+
+#ingredients .ing-row {
+    display: grid;
+    grid-template-columns: 1fr 110px 36px;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+#items-table td,
+#items-table th,
+#rates-table td,
+#rates-table th,
+#machines-table td,
+#machines-table th {
+    white-space: nowrap;
+}
+
+#diagram svg {
+    width: 100%;
+    height: auto;
+}
+
+pre#mermaid-src {
+    max-height: 280px;
+    overflow: auto;
+    background: var(--bs-tertiary-bg);
+    padding: .75rem;
+    border-radius: .5rem;
+}
+
+.img-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+.img-chip img {
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, .1);
+}

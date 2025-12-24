@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ja" data-bs-theme="light">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light dark">
+    <title>Factory Planner – 生産計算＆レシピ可視化</title>
+
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+
+    <!-- Mermaid (diagram) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: false, theme: "default" });</script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg border-bottom sticky-top bg-body">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">Factory Planner</a>
+            <div class="ms-auto d-flex gap-2">
+                <button id="btn-export" class="btn btn-outline-secondary btn-sm">エクスポート(JSON)</button>
+                <label class="btn btn-outline-secondary btn-sm mb-0">
+                    インポート(JSON)<input id="import-file" type="file" accept="application/json" hidden>
+                </label>
+                <button id="btn-demo" class="btn btn-primary btn-sm">デモデータ投入</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <ul class="nav nav-tabs" id="tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-items" data-bs-toggle="tab" data-bs-target="#pane-items"
+                    type="button" role="tab">① アイテム登録</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-calc" data-bs-toggle="tab" data-bs-target="#pane-calc" type="button"
+                    role="tab">② 生産計算</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-diagram" data-bs-toggle="tab" data-bs-target="#pane-diagram"
+                    type="button" role="tab">③ ダイアグラム</button>
+            </li>
+        </ul>
+
+        <div class="tab-content border border-top-0 p-3 rounded-bottom">
+
+            <!-- ① アイテム登録 -->
+            <section class="tab-pane fade show active" id="pane-items" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-lg-5">
+                        <h5 class="mb-3">アイテムを追加 / 更新</h5>
+                        <form id="item-form" autocomplete="off">
+                            <div class="mb-2">
+                                <label class="form-label">アイテム名<span class="text-danger">*</span></label>
+                                <input required class="form-control" id="item-name" placeholder="例: Iron Plate">
+                            </div>
+
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label">1回の加工時間(秒)</label>
+                                    <input type="number" min="0" step="0.001" class="form-control" id="item-time"
+                                        placeholder="例: 3.2">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">1回の出力個数</label>
+                                    <input type="number" min="1" step="1" class="form-control" id="item-outqty"
+                                        value="1">
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mt-1">
+                                <div class="col-6">
+                                    <label class="form-label">色 (任意)</label>
+                                    <input type="color" class="form-control form-control-color" id="item-color"
+                                        value="#b9d4ff">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">画像URL (任意)</label>
+                                    <input class="form-control" id="item-image" placeholder="https://...png">
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <label class="form-label mb-0">必要素材（複数可）</label>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                                        id="btn-add-ing">行を追加</button>
+                                </div>
+                                <div id="ingredients"></div>
+                                <div class="form-text">素材名は未登録でもOK（自動でプレースホルダー作成）。数量は1回の加工あたり。</div>
+                            </div>
+
+                            <div class="d-flex gap-2 mt-3">
+                                <button class="btn btn-primary" type="submit">保存</button>
+                                <button class="btn btn-outline-danger" type="button" id="btn-delete">削除</button>
+                                <button class="btn btn-outline-secondary ms-auto" type="button"
+                                    id="btn-clear-form">クリア</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-lg-7">
+                        <h5 class="mb-3">登録済みアイテム</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle" id="items-table">
+                                <thead>
+                                    <tr>
+                                        <th>アイテム</th>
+                                        <th class="text-end">時間(秒)</th>
+                                        <th class="text-end">出力</th>
+                                        <th>必要素材</th>
+                                        <th>色/画像</th>
+                                        <th style="width:1%"></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="small text-body-secondary">ローカルストレージに自動保存されます。</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ② 生産計算 -->
+            <section class="tab-pane fade" id="pane-calc" role="tabpanel">
+                <form id="calc-form" class="row gy-2 gx-2 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label">最終アイテム</label>
+                        <input class="form-control" id="goal-item" list="item-list" placeholder="例: Iron Plate">
+                        <datalist id="item-list"></datalist>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">x個</label>
+                        <input type="number" min="0" step="0.0001" class="form-control" id="goal-x" value="60">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">n秒間</label>
+                        <input type="number" min="1" step="1" class="form-control" id="goal-n" value="60">
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button class="btn btn-primary" type="submit">計算</button>
+                    </div>
+                </form>
+
+                <div id="calc-warn" class="alert alert-warning d-none mt-3"></div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-lg-6">
+                        <h6>必要レート（個/秒）</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm" id="rates-table">
+                                <thead>
+                                    <tr>
+                                        <th>アイテム</th>
+                                        <th class="text-end">必要レート</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <h6>装置必要数（理論値 / 切上げ）</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm" id="machines-table">
+                                <thead>
+                                    <tr>
+                                        <th>アイテム（加工）</th>
+                                        <th class="text-end">1台あたり能力<br><span class="fw-normal small">(個/秒)</span></th>
+                                        <th class="text-end">必要装置数</th>
+                                        <th class="text-end">切上げ</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ③ ダイアグラム -->
+            <section class="tab-pane fade" id="pane-diagram" role="tabpanel">
+                <div class="d-flex gap-2 align-items-end flex-wrap">
+                    <div>
+                        <label class="form-label">ルート（最終アイテム）</label>
+                        <input class="form-control" id="diagram-root" list="item-list" placeholder="例: Iron Plate">
+                    </div>
+                    <button class="btn btn-outline-primary" id="btn-build-diagram">生成</button>
+                    <button class="btn btn-outline-secondary" id="btn-copy-mermaid">Mermaidコードをコピー</button>
+                    <button class="btn btn-outline-secondary" id="btn-download-svg">SVGを保存</button>
+                </div>
+                <div class="small text-body-secondary mt-1">※各ノードは色指定があれば色づけされます。</div>
+                <pre id="mermaid-src" class="mt-3 d-none"></pre>
+                <div id="diagram" class="mt-3 p-2 border rounded bg-body"></div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="container my-4 small text-body-secondary">
+        © Factory Planner — 月城アリア製作室
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./app.js"></script>
+</body>
+
+</html>
