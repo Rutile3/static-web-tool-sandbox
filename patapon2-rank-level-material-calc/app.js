@@ -168,7 +168,7 @@
     if (!rows || rows.length === 0) {
       const tr = document.createElement("tr");
       const td = document.createElement("td");
-      td.colSpan = 3;
+      td.colSpan = 2;
       td.className = "text-muted";
       td.textContent = "-";
       tr.appendChild(td);
@@ -180,18 +180,15 @@
       const tr = document.createElement("tr");
 
       const td1 = document.createElement("td");
-      td1.textContent = r.label;
+      td1.className = "text-center";
+      td1.textContent = r.name;
 
       const td2 = document.createElement("td");
-      td2.textContent = r.rankOrBase;
-
-      const td3 = document.createElement("td");
-      td3.className = "text-end";
-      td3.textContent = String(r.need);
+      td2.className = "text-center";
+      td2.textContent = String(r.need);
 
       tr.appendChild(td1);
       tr.appendChild(td2);
-      tr.appendChild(td3);
       tbody.appendChild(tr);
     }
   }
@@ -275,8 +272,8 @@
           const matType = patConf.materials[i];
           const matName = getMaterialName(materialMaster, matType, rank);
           rows.push({
-            label: `素材${i + 1}（${matType}）`,
-            rankOrBase: matName ? `R${rank}（${matName}）` : `R${rank}`,
+            // 素材名はマスタから取得（見つからない場合は種類名でフォールバック）
+            name: matName || `素材${i + 1}（${matType}）`,
             need,
           });
         }
@@ -289,8 +286,7 @@
         const needCharin = Math.round(needCharinRaw * mult);
         const multLabel = Number.isFinite(mult) ? String(mult) : "1";
         rows.push({
-          label: "チャリン",
-          rankOrBase: `${base} × ${multLabel}`,
+          name: "チャリン",
           need: needCharin,
         });
 
