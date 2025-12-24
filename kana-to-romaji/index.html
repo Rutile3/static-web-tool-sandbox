@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>かな→ローマ字 変換ツール</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">かな→ローマ字</a>
+            <span class="navbar-text small">日本式 / 外務省ヘボン式 / 訓令式 / 駅名標ヘボン式</span>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">入力</h2>
+                        <div class="mb-3">
+                            <label for="input" class="form-label">ひらがな・カタカナ</label>
+                            <textarea id="input" class="form-control" rows="8"
+                                placeholder="例）とうきょう／トウキョウ／しんじゅくえき"></textarea>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="autoDetect" checked>
+                                    <label class="form-check-label" for="autoDetect">自動判定（かな種別）</label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="useApostrophe" checked>
+                                    <label class="form-check-label" for="useApostrophe">n の曖昧さ回避（n'）</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-2 mt-2">
+                            <div class="col-12 col-sm-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="longVowelPolicy" id="lvKeep"
+                                        value="keep" checked>
+                                    <label class="form-check-label" for="lvKeep">長音：そのまま</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="longVowelPolicy" id="lvCollapse"
+                                        value="collapse">
+                                    <label class="form-check-label" for="lvCollapse">長音：1文字に畳む</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-grid mt-3 gap-2">
+                            <button id="convert" class="btn btn-primary">変換する</button>
+                            <button id="clear" class="btn btn-outline-secondary">クリア</button>
+                        </div>
+                        <p class="text-muted small mt-3 mb-0">
+                            ※「外務省ヘボン式」はパスポート表記を意識し、長音のマクロン（¯）は使いません。<br>
+                            ※「駅名標ヘボン式」は駅名標ガイドライン風：shi/chi/tsu/ji/fu を採用、長音は表示簡略化します。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h2 class="h5 mb-0">日本式</h2>
+                            <button class="btn btn-sm btn-outline-secondary copy-btn" data-target="#nihon">コピー</button>
+                        </div>
+                        <pre id="nihon" class="result"></pre>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h2 class="h5 mb-0">外務省ヘボン式（パスポート）</h2>
+                            <button class="btn btn-sm btn-outline-secondary copy-btn"
+                                data-target="#hepburn_mofa">コピー</button>
+                        </div>
+                        <pre id="hepburn_mofa" class="result"></pre>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h2 class="h5 mb-0">訓令式</h2>
+                            <button class="btn btn-sm btn-outline-secondary copy-btn" data-target="#kunrei">コピー</button>
+                        </div>
+                        <pre id="kunrei" class="result"></pre>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h2 class="h5 mb-0">駅名標ヘボン式</h2>
+                            <button class="btn btn-sm btn-outline-secondary copy-btn"
+                                data-target="#hepburn_station">コピー</button>
+                        </div>
+                        <pre id="hepburn_station" class="result"></pre>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-top py-3">
+        <div class="container text-center small text-muted">
+            © Kana→Romaji Converter
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
