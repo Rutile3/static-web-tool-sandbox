@@ -27,7 +27,12 @@
                     <div class="card-header bg-light fw-semibold">入力</div>
                     <div class="card-body">
                         <div class="row g-3 align-items-end">
-                            <div class="col-12">
+                            <div class="col-6">
+                                <label for="patapon" class="form-label">パタポン</label>
+                                <select id="patapon" class="form-select"></select>
+                            </div>
+
+                            <div class="col-6">
                                 <label for="rarepon" class="form-label">れあポン</label>
                                 <select id="rarepon" class="form-select"></select>
                             </div>
@@ -80,7 +85,7 @@
                     <div class="card-header bg-light fw-semibold">メモ</div>
                     <div class="card-body">
                         <ul class="mb-0">
-                            <li>れあポンのマスタは <code>data/rarepon.json</code> に保持します。</li>
+                            <li>パタポン・れあポンのマスタは <code>data</code> に保持します。</li>
                             <li>「計算」で、素材とチャリンの現在→目標の差分（必要数）を算出します。</li>
                         </ul>
                     </div>
