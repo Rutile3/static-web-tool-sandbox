@@ -20,10 +20,10 @@
 - [kana-to-romaji](https://rutile3.github.io/static-web-tool-sandbox/kana-to-romaji/)
 - 「ひらがな」または「カタカナ」で入力された文字列を、**日本式・外務省ヘボン式・訓令式・駅名標ヘボン式** の4方式で同時にローマ字表記へ変換するWebツールです。
 
-### 【パタポン2】ランク・レベル要求素材数計算
+### 【パタポン2】育成コスト計算ツール
 
-- [patapon2-rank-level-material-calc](https://rutile3.github.io/static-web-tool-sandbox/patapon2-rank-level-material-calc/)
-- パタポン2で「れあポン」を作成する際に必要な素材数を、ランクとレベルから算出するツールです。
+- [patapon2-growth-cost-calculator](https://rutile3.github.io/static-web-tool-sandbox/patapon2-growth-cost-calculator/)
+- パタポン2で、育成に必要な素材とチャリンを算出するツールです。
 
 ### 楽天証券CSV 取得額（元本）遷移ビューア
 

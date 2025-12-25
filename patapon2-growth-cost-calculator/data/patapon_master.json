@@ -1,0 +1,38 @@
+{
+  "やりポン": {
+    "materials": ["鉱石", "牙", "肉", "骨"],
+    "charinMultiplier": 1.0
+  },
+  "たてポン": {
+    "materials": ["肉", "鉱石", "牙", "皮"],
+    "charinMultiplier": 1.2
+  },
+  "ゆみポン": {
+    "materials": ["牙", "骨", "鉱石", "木材"],
+    "charinMultiplier": 1.4
+  },
+  "きばポン": {
+    "materials": ["骨", "木材", "皮", "鉱石"],
+    "charinMultiplier": 2.2
+  },
+  "でかポン": {
+    "materials": ["皮", "肉", "骨", "牙"],
+    "charinMultiplier": 1.8
+  },
+  "めがポン": {
+    "materials": ["木材", "野菜", "液体", "合金"],
+    "charinMultiplier": 2.4
+  },
+  "とりポン": {
+    "materials": ["野菜", "合金", "木材", "種"],
+    "charinMultiplier": 2.8
+  },
+  "ろぼポン": {
+    "materials": ["合金", "皮", "野菜", "液体"],
+    "charinMultiplier": 2.6
+  },
+  "まほポン": {
+    "materials": ["種", "液体", "合金", "野菜"],
+    "charinMultiplier": 3.4
+  }
+}

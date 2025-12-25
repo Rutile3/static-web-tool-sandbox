@@ -1,0 +1,70 @@
+{
+  "ノーマル": {
+    "materials": [1, 1, 1, 1],
+    "charin": 10
+  },
+  "ピョコラン": {
+    "materials": [2, 1, 1, 1],
+    "charin": 15
+  },
+  "ブーヒョンク": {
+    "materials": [1, 2, 1, 1],
+    "charin": 15
+  },
+  "ゲコロンパ": {
+    "materials": [2, 2, 1, 1],
+    "charin": 20
+  },
+  "フンミャガ": {
+    "materials": [3, 1, 1, 1],
+    "charin": 20
+  },
+  "ワンダバダ": {
+    "materials": [1, 3, 1, 1],
+    "charin": 20
+  },
+  "モリウッソー": {
+    "materials": [2, 2, 2, 2],
+    "charin": 25
+  },
+  "チクリンチ": {
+    "materials": [3, 2, 2, 2],
+    "charin": 30
+  },
+  "ウホッキャ": {
+    "materials": [2, 2, 3, 3],
+    "charin": 30
+  },
+  "ギョギョッパ": {
+    "materials": [2, 3, 2, 2],
+    "charin": 30
+  },
+  "モフルモ": {
+    "materials": [3, 2, 2, 1],
+    "charin": 35
+  },
+  "スペング": {
+    "materials": [4, 3, 3, 3],
+    "charin": 40
+  },
+  "カノディア": {
+    "materials": [3, 4, 3, 3],
+    "charin": 40
+  },
+  "マシュリロ": {
+    "materials": [4, 4, 3, 3],
+    "charin": 45
+  },
+  "ババッサ": {
+    "materials": [5, 4, 3, 3],
+    "charin": 50
+  },
+  "モーギュギュ": {
+    "materials": [4, 5, 3, 4],
+    "charin": 55
+  },
+  "ワギャンバ": {
+    "materials": [5, 5, 4, 4],
+    "charin": 60
+  }
+}
