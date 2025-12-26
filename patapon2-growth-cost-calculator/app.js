@@ -4,9 +4,11 @@
   // -----------------------------
   // 設定
   // -----------------------------
-  const RAREPON_MASTER_JSON_PATH = "./data/rarepon_master.json";
-  const PATAPON_MASTER_JSON_PATH = "./data/patapon_master.json";
-  const MATERIAL_MASTER_JSON_PATH = "./data/material_master.json";
+  const MASTER_SPECS = [
+    { key: "rareponMaster", path: "./data/rarepon_master.json", label: "れあポンマスタ" },
+    { key: "pataponMaster", path: "./data/patapon_master.json", label: "パタポンマスタ" },
+    { key: "materialMaster", path: "./data/material_master.json", label: "素材マスタ" },
+  ];
 
   // 素材ごとの要求開始レベル（ゲーム仕様）
   // 素材1/2: Lv1から、素材3: Lv3から、素材4: Lv6から
@@ -99,22 +101,19 @@
   // -----------------------------
   // マスタ読み込み
   // -----------------------------
-  async function loadRareponMaster() {
-    const res = await fetch(RAREPON_MASTER_JSON_PATH, { cache: "no-cache" });
-    if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
+  async function loadJson(path, label) {
+    const res = await fetch(path, { cache: "no-cache" });
+    if (!res.ok) {
+      throw new Error(`${label}の読み込みに失敗しました: ${res.status}`);
+    }
     return await res.json();
   }
 
-  async function loadPataponMaster() {
-    const res = await fetch(PATAPON_MASTER_JSON_PATH, { cache: "no-cache" });
-    if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
-    return await res.json();
-  }
-
-  async function loadMaterialMaster() {
-    const res = await fetch(MATERIAL_MASTER_JSON_PATH, { cache: "no-cache" });
-    if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
-    return await res.json();
+  async function loadMasters() {
+    const entries = await Promise.all(
+      MASTER_SPECS.map(async (s) => [s.key, await loadJson(s.path, s.label)])
+    );
+    return Object.fromEntries(entries);
   }
 
   // -----------------------------
@@ -245,16 +244,12 @@
     let pataponMaster;
     let materialMaster;
     try {
-      [rareponMaster, pataponMaster, materialMaster] = await Promise.all([
-        loadRareponMaster(),
-        loadPataponMaster(),
-        loadMaterialMaster(),
-      ]);
+      ({ rareponMaster, pataponMaster, materialMaster } = await loadMasters());
       fillRareponSelect(rareponSel, rareponMaster);
       fillPataponSelect(pataponSel, pataponMaster);
     } catch (e) {
       console.error(e);
-      setError("マスタ読み込み失敗");
+      setError(e && e.message ? e.message : "マスタ読み込み失敗");
       return;
     }
 
