@@ -10,9 +10,23 @@
     { key: "materialMaster", path: "./data/material_master.json", label: "素材マスタ" },
   ];
 
-  // 素材ごとの要求開始レベル（ゲーム仕様）
-  // 素材1/2: Lv1から、素材3: Lv3から、素材4: Lv6から
-  const MATERIAL_START_LEVELS = [1, 1, 3, 6];
+  // -----------------------------
+  // 設定値
+  // -----------------------------
+  const CONFIG = {
+    // 素材スロット数（素材1〜N）
+    materialSlots: 4,
+    // 素材ごとの要求開始レベル（ゲーム仕様）
+    // 素材1/2: Lv1から、素材3: Lv3から、素材4: Lv6から
+    materialStartLevels: [1, 1, 3, 6],
+    // レベル選択肢（UI）
+    level: {
+      curMin: 0,
+      curMax: 9,   // Lv10は「これ以上上げない」前提で選択肢から除外
+      tgtMin: 1,
+      tgtMax: 10,
+    },
+  };
 
   // -----------------------------
   // 数学ロジック
@@ -230,8 +244,8 @@
     }
 
     // レベル選択肢
-    fillSelectRange(curSel, 0, 9);
-    fillSelectRange(tgtSel, 1, 10);
+    fillSelectRange(curSel, CONFIG.level.curMin, CONFIG.level.curMax);
+    fillSelectRange(tgtSel, CONFIG.level.tgtMin, CONFIG.level.tgtMax);
 
     // マスタ読み込み → れあポンセレクト構築
     let rareponMaster;
@@ -272,9 +286,9 @@
         const rows = [];
 
         // 素材1〜4
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < CONFIG.materialSlots; i++) {
           const rank = parseInt(materials[i], 10);
-          const startLv = MATERIAL_START_LEVELS[i];
+          const startLv = CONFIG.materialStartLevels[i];
           const need = requiredMaterialBetween(rank, startLv, cur, tgt);
           if (need <= 0) continue;
           const matType = patConf.materials[i];
