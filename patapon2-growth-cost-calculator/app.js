@@ -135,6 +135,27 @@
   // -----------------------------
   const $ = (id) => document.getElementById(id);
 
+  // DOM参照のキャッシュ
+  const ui = {
+    pataponSel: $("patapon"),
+    rareponSel: $("rarepon"),
+    curSel: $("curLevel"),
+    tgtSel: $("tgtLevel"),
+    btnCalc: $("btnCalc"),
+    resultTbody: $("resultTableBody"),
+  };
+
+  function assertUi() {
+    const missing = Object.entries(ui)
+      .filter(([, el]) => !el)
+      .map(([k]) => k);
+    if (missing.length) {
+      console.error("必須の要素が見つかりません: " + missing.join(", "));
+      return false;
+    }
+    return true;
+  }
+
   function fillSelectRange(selectEl, start, end) {
     selectEl.innerHTML = "";
     for (let i = start; i <= end; i++) {
@@ -184,7 +205,7 @@
   }
 
   function setResultTable(rows) {
-    const tbody = $("resultTableBody");
+    const tbody = ui.resultTbody;
     if (!tbody) return;
 
     tbody.innerHTML = "";
@@ -230,31 +251,23 @@
   }
 
   async function init() {
-    const pataponSel = $("patapon");
-    const rareponSel = $("rarepon");
-    const curSel = $("curLevel");
-    const tgtSel = $("tgtLevel");
-    const btn = $("btnCalc");
-
-    if (!pataponSel || !rareponSel || !curSel || !tgtSel || !btn) {
-      console.error(
-        "必須の要素が見つかりません（patapon/rarepon/curLevel/tgtLevel/btnCalc）"
-      );
-      return;
-    }
-
+    if (!assertUi()) return;
     // レベル選択肢
-    fillSelectRange(curSel, CONFIG.level.curMin, CONFIG.level.curMax);
-    fillSelectRange(tgtSel, CONFIG.level.tgtMin, CONFIG.level.tgtMax);
+    fillSelectRange(ui.curSel, CONFIG.level.curMin, CONFIG.level.curMax);
+    fillSelectRange(ui.tgtSel, CONFIG.level.tgtMin, CONFIG.level.tgtMax);
 
     // マスタ読み込み → れあポンセレクト構築
     let rareponMaster;
     let pataponMaster;
     let materialMaster;
     try {
-      ({ rareponMaster, pataponMaster, materialMaster } = await loadMasters());
-      fillRareponSelect(rareponSel, rareponMaster);
-      fillPataponSelect(pataponSel, pataponMaster);
+      [rareponMaster, pataponMaster, materialMaster] = await Promise.all([
+        loadRareponMaster(),
+        loadPataponMaster(),
+        loadMaterialMaster(),
+      ]);
+      fillRareponSelect(ui.rareponSel, rareponMaster);
+      fillPataponSelect(ui.pataponSel, pataponMaster);
     } catch (e) {
       console.error(e);
       setError(e && e.message ? e.message : "マスタ読み込み失敗");
@@ -262,17 +275,17 @@
     }
 
     // 初期値
-    curSel.value = "0";
-    tgtSel.value = "10";
-    if (pataponSel.options.length > 0) pataponSel.selectedIndex = 0;
-    if (rareponSel.options.length > 0) rareponSel.selectedIndex = 0;
+    ui.curSel.value = "0";
+    ui.tgtSel.value = "10";
+    if (ui.pataponSel.options.length > 0) ui.pataponSel.selectedIndex = 0;
+    if (ui.rareponSel.options.length > 0) ui.rareponSel.selectedIndex = 0;
 
     const calcAndRender = () => {
       try {
-        const pataponName = pataponSel.value;
-        const rareponName = rareponSel.value;
-        const cur = parseInt(curSel.value, 10);
-        const tgt = parseInt(tgtSel.value, 10);
+        const pataponName = ui.pataponSel.value;
+        const rareponName = ui.rareponSel.value;
+        const cur = parseInt(ui.curSel.value, 10);
+        const tgt = parseInt(ui.tgtSel.value, 10);
 
         const rareConf = rareponMaster[rareponName];
         if (!rareConf) throw new Error("れあポン設定が見つかりません");
@@ -320,14 +333,14 @@
       }
     };
 
-    btn.addEventListener("click", calcAndRender);
+    ui.btnCalc.addEventListener("click", calcAndRender);
 
     // UX: 変更したら表示をリセット
     const reset = () => setResultTable([]);
-    pataponSel.addEventListener("change", reset);
-    rareponSel.addEventListener("change", reset);
-    curSel.addEventListener("change", reset);
-    tgtSel.addEventListener("change", reset);
+    ui.pataponSel.addEventListener("change", reset);
+    ui.rareponSel.addEventListener("change", reset);
+    ui.curSel.addEventListener("change", reset);
+    ui.tgtSel.addEventListener("change", reset);
 
     // 初期表示は未計算
     setResultTable([]);
