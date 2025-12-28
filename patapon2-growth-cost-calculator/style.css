@@ -25,3 +25,9 @@ output.form-control {
 .small {
     font-size: .9rem;
 }
+
+/* --- 素材ランク別の文字色 --- */
+main #resultTableBody td.rank-2 { color: green; }
+main #resultTableBody td.rank-3 { color: red; }
+main #resultTableBody td.rank-4 { color: orange; }
+main #resultTableBody td.rank-5 { color: purple; }

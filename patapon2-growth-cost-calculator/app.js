@@ -158,22 +158,16 @@
     return mat.ranks[String(rank)] || "";
   }
 
-  // ランクに応じた文字色（ランク1はデフォルト）
-  function rankToColor(rank) {
+  // ランクに応じたCSSクラス（ランク1は指定なし）
+  function rankToClass(rank) {
     switch (Number(rank)) {
-      case 2:
-        return "green";
-      case 3:
-        return "red";
-      case 4:
-        return "orange";
-      case 5:
-        return "purple";
-      default:
-        return null;
+      case 2: return "rank-2";
+      case 3: return "rank-3";
+      case 4: return "rank-4";
+      case 5: return "rank-5";
+      default: return null;
     }
   }
-
 
   function setResultTable(rows) {
     const tbody = $("resultTableBody");
@@ -200,8 +194,8 @@
       td1.textContent = r.name;
 
 
-      const c = rankToColor(r.rank);
-      if (c) td1.style.color = c;
+      const cls = rankToClass(r.rank);
+      if (cls) td1.classList.add(cls);
       const td2 = document.createElement("td");
       td2.className = "text-center";
       td2.textContent = String(r.need);
