@@ -58,7 +58,7 @@
    *  - level=3    => 1（ここで1からカウント開始）
    *  - level=10   => 8
    */
-  function effectiveLevel(level, startLv) {
+  function toEffectiveLevel(level, startLv) {
     return Math.max(0, level - (startLv - 1));
   }
 
@@ -78,8 +78,8 @@
     const lo = Math.min(cur, tgt);
     const hi = Math.max(cur, tgt);
 
-    const curEff = effectiveLevel(lo, startLv);
-    const tgtEff = effectiveLevel(hi, startLv);
+    const curEff = toEffectiveLevel(lo, startLv);
+    const tgtEff = toEffectiveLevel(hi, startLv);
 
     if (tgtEff <= curEff) return 0;
     return cumulativeRequired(rank, tgtEff) - cumulativeRequired(rank, curEff);
@@ -88,7 +88,7 @@
   /**
    * 三角数 T(n)=1+2+...+n（n>=0）
    */
-  function tri(n) {
+  function sum1to(n) {
     if (!Number.isInteger(n) || n < 0)
       throw new Error("tri の引数は0以上の整数が必要です");
     return (n * (n + 1)) / 2;
@@ -109,7 +109,7 @@
     const hi = Math.max(cur, tgt);
 
     // (lo+1)+...+hi = T(hi) - T(lo)
-    return base * (tri(hi) - tri(lo));
+    return base * (sum1to(hi) - sum1to(lo));
   }
 
   // -----------------------------
@@ -204,7 +204,7 @@
     }
   }
 
-  function setResultTable(rows) {
+  function renderResultTable(rows) {
     const tbody = ui.resultTbody;
     if (!tbody) return;
 
@@ -242,7 +242,7 @@
   }
 
   function setError(message) {
-    setResultTable([
+    renderResultTable([
       {
         name: "エラー",
         need: message || "計算に失敗しました",
@@ -326,7 +326,7 @@
           need: needCharin,
         });
 
-        setResultTable(rows);
+        renderResultTable(rows);
       } catch (e) {
         console.error(e);
         setError("計算失敗");
@@ -336,14 +336,14 @@
     ui.btnCalc.addEventListener("click", calcAndRender);
 
     // UX: 変更したら表示をリセット
-    const reset = () => setResultTable([]);
+    const reset = () => renderResultTable([]);
     ui.pataponSel.addEventListener("change", reset);
     ui.rareponSel.addEventListener("change", reset);
     ui.curSel.addEventListener("change", reset);
     ui.tgtSel.addEventListener("change", reset);
 
     // 初期表示は未計算
-    setResultTable([]);
+    renderResultTable([]);
   }
 
   document.addEventListener("DOMContentLoaded", () => {
