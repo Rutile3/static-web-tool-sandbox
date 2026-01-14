@@ -287,9 +287,11 @@
 
         const rareponConf = rareponMaster[rareponName];
         if (!rareponConf) throw new Error("れあポン設定が見つかりません");
-
         const patponConf = pataponMaster[pataponName];
         if (!patponConf) throw new Error("パタポン設定が見つかりません");
+        
+        // 「現在レベル → 目標レベル」の場合のみ計算する
+        if (tgt <= cur) return;
 
         const rows = [];
 
