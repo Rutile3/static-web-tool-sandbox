@@ -265,8 +265,8 @@
 
         const rareponConf = rareponMaster[rareponName];
         if (!rareponConf) throw new Error("れあポン設定が見つかりません");
-        const patponConf = pataponMaster[pataponName];
-        if (!patponConf) throw new Error("パタポン設定が見つかりません");
+        const pataponConf = pataponMaster[pataponName];
+        if (!pataponConf) throw new Error("パタポン設定が見つかりません");
 
         // 「現在レベル → 目標レベル」の場合のみ計算する
         if (tgt <= cur) {
@@ -278,7 +278,7 @@
 
         // 素材1〜4
         for (let i = 0; i < CONFIG.materialSlots; i++) {
-          const matType = patponConf.materials[i];
+          const matType = pataponConf.materials[i];
           const matRank = parseInt(rareponConf.materials[i], 10);
           const matName = getMaterialName(materialMaster, matType, matRank);
 
