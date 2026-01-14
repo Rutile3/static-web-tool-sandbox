@@ -75,7 +75,7 @@
     if (!Number.isInteger(tgt) || tgt < 1)
       throw new Error("tgt は1以上の整数である必要があります");
     if (tgt <= cur)
-      throw new Error("tgt は cur より大きい必要があります");
+      return 0;
 
     const curEff = toEffectiveLevel(cur, startLv);
     const tgtEff = toEffectiveLevel(tgt, startLv);
@@ -97,7 +97,7 @@
     if (!Number.isInteger(tgt) || tgt < 1)
       throw new Error("tgt は1以上の整数である必要があります");
     if (tgt <= cur)
-      throw new Error("tgt は cur より大きい必要があります");
+      return 0;
 
     let sum = 0;
     for (let lv = cur + 1; lv <= tgt; lv++) {
