@@ -293,8 +293,8 @@
         }
 
         // チャリン（パタポン倍率を適用）
-        const patponMult = Number(patponConf.charinMultiplier ?? 1);
-        const rareponMult = parseInt(rareponConf.charinMultiplier, 10);
+        const patponMult = Number(pataponConf.charinMultiplier ?? 1);
+        const rareponMult = Number(rareponConf.charinMultiplier ?? 1);
         const need = requiredCharinBetween(patponMult, rareponMult, cur, tgt);
         rows.push({
           name: "チャリン",
