@@ -66,18 +66,20 @@
    * ただし cur' / tgt' は startLv を原点にした有効レベル
    */
   function requiredMaterialBetween(rank, startLv, cur, tgt) {
-    if (![rank, startLv, cur, tgt].every(Number.isInteger))
-      throw new Error("入力は整数である必要があります");
-    if (rank <= 0) throw new Error("rank は1以上である必要があります");
-    if (startLv <= 0) throw new Error("startLv は1以上である必要があります");
-    if (cur < 0 || tgt < 0)
-      throw new Error("level は0以上である必要があります");
+    if (!Number.isInteger(rank) || rank <= 0)
+      throw new Error("rank は正の整数である必要があります");
+    if (!Number.isInteger(startLv) || startLv < 1)
+      throw new Error("startLv は1以上の整数である必要があります");
+    if (!Number.isInteger(cur) || cur < 0)
+      throw new Error("cur は0以上の整数である必要があります");
+    if (!Number.isInteger(tgt) || tgt < 1)
+      throw new Error("tgt は1以上の整数である必要があります");
 
-    const lo = Math.min(cur, tgt);
-    const hi = Math.max(cur, tgt);
+    // 「現在レベル → 目標レベル」の差分のみ計算する
+    if (tgt <= cur) return 0;
 
-    const curEff = toEffectiveLevel(lo, startLv);
-    const tgtEff = toEffectiveLevel(hi, startLv);
+    const curEff = toEffectiveLevel(cur, startLv);
+    const tgtEff = toEffectiveLevel(tgt, startLv);
 
     if (tgtEff <= curEff) return 0;
     return cumulativeRequired(rank, tgtEff) - cumulativeRequired(rank, curEff);
@@ -89,10 +91,10 @@
   function requiredCharinBetween(base, mult, cur, tgt) {
     if (!Number.isInteger(base) || base < 0)
       throw new Error("base は0以上の整数が必要です");
-    if (!Number.isInteger(cur) || !Number.isInteger(tgt))
-      throw new Error("level は整数である必要があります");
-    if (cur < 0 || tgt < 0)
-      throw new Error("level は0以上の整数である必要があります");
+    if (!Number.isInteger(cur) || cur < 0)
+      throw new Error("cur は0以上の整数である必要があります");
+    if (!Number.isInteger(tgt) || tgt < 1)
+      throw new Error("tgt は1以上の整数である必要があります");
 
     // 「現在レベル → 目標レベル」の差分のみ計算する
     if (tgt <= cur) return 0;
