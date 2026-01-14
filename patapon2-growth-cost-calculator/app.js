@@ -84,18 +84,9 @@
   }
 
   /**
-   * 三角数 T(n)=1+2+...+n（n>=0）
+   * チャリン必要数を求める。
    */
-  function sum1to(n) {
-    if (!Number.isInteger(n) || n < 0)
-      throw new Error("tri の引数は0以上の整数が必要です");
-    return (n * (n + 1)) / 2;
-  }
-
-  /**
-   * チャリン必要数：base × ((lo+1)+...+hi)
-   */
-  function requiredCharinBetween(base, cur, tgt) {
+  function requiredCharinBetween(base, mult, cur, tgt) {
     if (!Number.isInteger(base) || base < 0)
       throw new Error("base は0以上の整数が必要です");
     if (!Number.isInteger(cur) || !Number.isInteger(tgt))
@@ -103,12 +94,16 @@
     if (cur < 0 || tgt < 0)
       throw new Error("level は0以上の整数である必要があります");
 
-    const lo = Math.min(cur, tgt);
-    const hi = Math.max(cur, tgt);
+    // 「現在レベル → 目標レベル」の差分のみ計算する
+    if (tgt <= cur) return 0;
 
-    // (lo+1)+...+hi = T(hi) - T(lo)
-    return base * (sum1to(hi) - sum1to(lo));
+    let sum = 0;
+    for (let lv = cur + 1; lv <= tgt; lv++) {
+      sum += base * mult * lv;
+    }
+    return sum;
   }
+
 
   // -----------------------------
   // マスタ読み込み
@@ -317,7 +312,7 @@
         // チャリン（パタポン倍率を適用）
         const base = parseInt(baseCharin, 10);
         const mult = Number(patConf.charinMultiplier ?? 1);
-        const needCharin = requiredCharinBetween(base, cur, tgt) * mult; // 必ず整数になる
+        const needCharin = requiredCharinBetween(base, mult, cur, tgt); // 必ず整数になる
         rows.push({
           name: "チャリン",
           rank: null,
