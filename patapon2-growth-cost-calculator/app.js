@@ -163,10 +163,8 @@
   }
 
   function getMaterialName(materialMaster, materialType, rank) {
-    if (!materialMaster) return "";
-    const mat = materialMaster[String(materialType)];
-    if (!mat || !mat.ranks) return "";
-    return mat.ranks[String(rank)] || "";
+    const name = materialMaster?.[String(materialType)]?.ranks?.[String(rank)];
+    return name ?? `${materialType}（ランク${rank}）`;
   }
 
   // ランクに応じたCSSクラス（ランク1は指定なし）
@@ -286,7 +284,7 @@
           const need = requiredMaterialBetween(matRank, startLv, cur, tgt);
           if (need <= 0) continue;
           rows.push({// 素材名はマスタから取得（見つからない場合は種類名でフォールバック）
-            name: matName || `素材${i + 1}（${matType}）`,
+            name: matName,
             rank: matRank,
             need,
           });
