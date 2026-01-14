@@ -293,15 +293,16 @@
 
         // 素材1〜4
         for (let i = 0; i < CONFIG.materialSlots; i++) {
-          const rank = parseInt(rareponConf.materials[i], 10);
-          const startLv = CONFIG.materialStartLevels[i];
-          const need = requiredMaterialBetween(rank, startLv, cur, tgt);
-          if (need <= 0) continue;
           const matType = patponConf.materials[i];
-          const matName = getMaterialName(materialMaster, matType, rank);
+          const matRank = parseInt(rareponConf.materials[i], 10);
+          const matName = getMaterialName(materialMaster, matType, matRank);
+
+          const startLv = CONFIG.materialStartLevels[i];
+          const need = requiredMaterialBetween(matRank, startLv, cur, tgt);
+          if (need <= 0) continue;
           rows.push({// 素材名はマスタから取得（見つからない場合は種類名でフォールバック）
             name: matName || `素材${i + 1}（${matType}）`,
-            rank,
+            rank: matRank,
             need,
           });
         }
@@ -309,11 +310,11 @@
         // チャリン（パタポン倍率を適用）
         const base = parseInt(rareponConf.charin, 10);
         const mult = Number(patponConf.charinMultiplier ?? 1);
-        const needCharin = requiredCharinBetween(base, mult, cur, tgt); // 必ず整数になる
+        const need = requiredCharinBetween(base, mult, cur, tgt); // 必ず整数になる
         rows.push({
           name: "チャリン",
           rank: null,
-          need: needCharin,
+          need,
         });
 
         renderResultTable(rows);
