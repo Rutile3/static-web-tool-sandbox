@@ -108,22 +108,22 @@
   // -----------------------------
   // マスタ読み込み
   // -----------------------------
-  async function loadRareponMaster() {
-    const res = await fetch(RAREPON_MASTER_JSON_PATH, { cache: "no-cache" });
+  async function fetchMasterJsonNoCache(path) {
+    const res = await fetch(path, { cache: "no-cache" });
     if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
     return await res.json();
+  }
+
+  async function loadRareponMaster() {
+    return await fetchMasterJsonNoCache(RAREPON_MASTER_JSON_PATH);
   }
 
   async function loadPataponMaster() {
-    const res = await fetch(PATAPON_MASTER_JSON_PATH, { cache: "no-cache" });
-    if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
-    return await res.json();
+    return await fetchMasterJsonNoCache(PATAPON_MASTER_JSON_PATH);
   }
 
   async function loadMaterialMaster() {
-    const res = await fetch(MATERIAL_MASTER_JSON_PATH, { cache: "no-cache" });
-    if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
-    return await res.json();
+    return await fetchMasterJsonNoCache(MATERIAL_MASTER_JSON_PATH);
   }
 
   // -----------------------------
