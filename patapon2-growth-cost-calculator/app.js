@@ -116,18 +116,6 @@
     return await res.json();
   }
 
-  async function loadRareponMaster() {
-    return await fetchMasterJsonNoCache(RAREPON_MASTER_JSON_PATH);
-  }
-
-  async function loadPataponMaster() {
-    return await fetchMasterJsonNoCache(PATAPON_MASTER_JSON_PATH);
-  }
-
-  async function loadMaterialMaster() {
-    return await fetchMasterJsonNoCache(MATERIAL_MASTER_JSON_PATH);
-  }
-
   // -----------------------------
   // UI
   // -----------------------------
@@ -250,9 +238,9 @@
     let materialMaster;
     try {
       [rareponMaster, pataponMaster, materialMaster] = await Promise.all([
-        loadRareponMaster(),
-        loadPataponMaster(),
-        loadMaterialMaster(),
+        fetchMasterJsonNoCache(RAREPON_MASTER_JSON_PATH),
+        fetchMasterJsonNoCache(PATAPON_MASTER_JSON_PATH),
+        fetchMasterJsonNoCache(MATERIAL_MASTER_JSON_PATH),
       ]);
       fillSelectMasterName(ui.rareponSel, rareponMaster);
       fillSelectMasterName(ui.pataponSel, pataponMaster);
