@@ -88,10 +88,10 @@
    * チャリン必要数を求める。
    */
   function requiredCharinBetween(pataponMult, rareponMult, cur, tgt) {
-    if (pataponMult < 0)
-      throw new Error("pataponMult は0より大きい必要があります");
-    if (rareponMult < 0)
-      throw new Error("rareponMult は0より大きい必要があります");
+    if (pataponMult < 1)
+      throw new Error("pataponMult は1以上である必要があります");
+    if (rareponMult < 1)
+      throw new Error("rareponMult は1以上である必要があります");
     if (!Number.isInteger(cur) || cur < 0)
       throw new Error("cur は0以上の整数である必要があります");
     if (!Number.isInteger(tgt) || tgt < 1)
