@@ -291,7 +291,10 @@
         if (!patponConf) throw new Error("パタポン設定が見つかりません");
         
         // 「現在レベル → 目標レベル」の場合のみ計算する
-        if (tgt <= cur) return;
+        if (tgt <= cur) {
+          renderResultTable([]);
+          return;
+        }
 
         const rows = [];
 
@@ -330,15 +333,14 @@
 
     ui.btnCalc.addEventListener("click", calcAndRender);
 
-    // UX: 変更したら表示をリセット
-    const reset = () => renderResultTable([]);
-    ui.pataponSel.addEventListener("change", reset);
-    ui.rareponSel.addEventListener("change", reset);
-    ui.curSel.addEventListener("change", reset);
-    ui.tgtSel.addEventListener("change", reset);
+    // UX: 変更したら表示を即時更新
+    ui.pataponSel.addEventListener("change", calcAndRender);
+    ui.rareponSel.addEventListener("change", calcAndRender);
+    ui.curSel.addEventListener("change", calcAndRender);
+    ui.tgtSel.addEventListener("change", calcAndRender);
 
-    // 初期表示は未計算
-    renderResultTable([]);
+    // 初期表示
+    calcAndRender();
   }
 
   document.addEventListener("DOMContentLoaded", () => {
