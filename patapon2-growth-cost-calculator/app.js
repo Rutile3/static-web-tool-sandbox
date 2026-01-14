@@ -164,17 +164,7 @@
     }
   }
 
-  function fillPataponSelect(selectEl, master) {
-    selectEl.innerHTML = "";
-    Object.keys(master).forEach((name) => {
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      selectEl.appendChild(opt);
-    });
-  }
-
-  function fillRareponSelect(selectEl, master) {
+  function fillSelectMasterName(selectEl, master) {
     selectEl.innerHTML = "";
     Object.keys(master).forEach((name) => {
       const opt = document.createElement("option");
@@ -264,8 +254,8 @@
         loadPataponMaster(),
         loadMaterialMaster(),
       ]);
-      fillRareponSelect(ui.rareponSel, rareponMaster);
-      fillPataponSelect(ui.pataponSel, pataponMaster);
+      fillSelectMasterName(ui.rareponSel, rareponMaster);
+      fillSelectMasterName(ui.pataponSel, pataponMaster);
     } catch (e) {
       console.error(e);
       setError("マスタ読み込み失敗");
