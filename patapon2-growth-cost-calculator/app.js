@@ -74,9 +74,8 @@
       throw new Error("cur は0以上の整数である必要があります");
     if (!Number.isInteger(tgt) || tgt < 1)
       throw new Error("tgt は1以上の整数である必要があります");
-
-    // 「現在レベル → 目標レベル」の差分のみ計算する
-    if (tgt <= cur) return 0;
+    if (tgt <= cur) 
+      throw new Error("tgt は cur より大きい必要があります");
 
     const curEff = toEffectiveLevel(cur, startLv);
     const tgtEff = toEffectiveLevel(tgt, startLv);
@@ -90,14 +89,13 @@
    */
   function requiredCharinBetween(base, mult, cur, tgt) {
     if (!Number.isInteger(base) || base < 0)
-      throw new Error("base は0以上の整数が必要です");
+      throw new Error("base は0以上の整数である必要があります");
     if (!Number.isInteger(cur) || cur < 0)
       throw new Error("cur は0以上の整数である必要があります");
     if (!Number.isInteger(tgt) || tgt < 1)
       throw new Error("tgt は1以上の整数である必要があります");
-
-    // 「現在レベル → 目標レベル」の差分のみ計算する
-    if (tgt <= cur) return 0;
+    if (tgt <= cur) 
+      throw new Error("tgt は cur より大きい必要があります");
 
     let sum = 0;
     for (let lv = cur + 1; lv <= tgt; lv++) {
