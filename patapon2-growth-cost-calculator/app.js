@@ -74,7 +74,7 @@
       throw new Error("cur は0以上の整数である必要があります");
     if (!Number.isInteger(tgt) || tgt < 1)
       throw new Error("tgt は1以上の整数である必要があります");
-    if (tgt <= cur) 
+    if (tgt <= cur)
       throw new Error("tgt は cur より大きい必要があります");
 
     const curEff = toEffectiveLevel(cur, startLv);
@@ -87,19 +87,21 @@
   /**
    * チャリン必要数を求める。
    */
-  function requiredCharinBetween(base, mult, cur, tgt) {
-    if (!Number.isInteger(base) || base < 0)
-      throw new Error("base は0以上の整数である必要があります");
+  function requiredCharinBetween(pataponMult, rareponMult, cur, tgt) {
+    if (pataponMult < 0)
+      throw new Error("pataponMult は0より大きい必要があります");
+    if (rareponMult < 0)
+      throw new Error("rareponMult は0より大きい必要があります");
     if (!Number.isInteger(cur) || cur < 0)
       throw new Error("cur は0以上の整数である必要があります");
     if (!Number.isInteger(tgt) || tgt < 1)
       throw new Error("tgt は1以上の整数である必要があります");
-    if (tgt <= cur) 
+    if (tgt <= cur)
       throw new Error("tgt は cur より大きい必要があります");
 
     let sum = 0;
     for (let lv = cur + 1; lv <= tgt; lv++) {
-      sum += base * mult * lv;
+      sum += (pataponMult * rareponMult) * lv;
     }
     return sum;
   }
@@ -265,7 +267,7 @@
         if (!rareponConf) throw new Error("れあポン設定が見つかりません");
         const patponConf = pataponMaster[pataponName];
         if (!patponConf) throw new Error("パタポン設定が見つかりません");
-        
+
         // 「現在レベル → 目標レベル」の場合のみ計算する
         if (tgt <= cur) {
           renderResultTable([]);
@@ -291,9 +293,9 @@
         }
 
         // チャリン（パタポン倍率を適用）
-        const base = parseInt(rareponConf.charin, 10);
-        const mult = Number(patponConf.charinMultiplier ?? 1);
-        const need = requiredCharinBetween(base, mult, cur, tgt); // 必ず整数になる
+        const patponMult = Number(patponConf.charinMultiplier ?? 1);
+        const rareponMult = parseInt(rareponConf.charinMultiplier, 10);
+        const need = requiredCharinBetween(patponMult, rareponMult, cur, tgt);
         rows.push({
           name: "チャリン",
           rank: null,
