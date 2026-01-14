@@ -316,11 +316,8 @@
 
         // チャリン（パタポン倍率を適用）
         const base = parseInt(baseCharin, 10);
-        const needCharinRaw = requiredCharinBetween(base, cur, tgt);
         const mult = Number(patConf.charinMultiplier ?? 1);
-        // 端数が出る可能性があるため、最終結果は四捨五入して整数化
-        const needCharin = Math.round(needCharinRaw * mult);
-        const multLabel = Number.isFinite(mult) ? String(mult) : "1";
+        const needCharin = requiredCharinBetween(base, cur, tgt) * mult; // 必ず整数になる
         rows.push({
           name: "チャリン",
           rank: null,
