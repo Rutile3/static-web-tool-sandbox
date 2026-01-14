@@ -254,56 +254,68 @@
     if (ui.pataponSel.options.length > 0) ui.pataponSel.selectedIndex = 0;
     if (ui.rareponSel.options.length > 0) ui.rareponSel.selectedIndex = 0;
 
-    const calcAndRender = () => {
-      try {
-        const pataponName = ui.pataponSel.value;
-        const rareponName = ui.rareponSel.value;
-        const cur = parseInt(ui.curSel.value, 10);
-        const tgt = parseInt(ui.tgtSel.value, 10);
+    function readInputs() {
+      const pataponName = ui.pataponSel.value;
+      const rareponName = ui.rareponSel.value;
+      const cur = parseInt(ui.curSel.value, 10);
+      const tgt = parseInt(ui.tgtSel.value, 10);
 
-        const rareponConf = rareponMaster[rareponName];
-        if (!rareponConf) throw new Error("れあポン設定が見つかりません");
-        const pataponConf = pataponMaster[pataponName];
-        if (!pataponConf) throw new Error("パタポン設定が見つかりません");
+      if (!Number.isInteger(cur) || !Number.isInteger(tgt))
+        throw new Error("レベルは整数である必要があります");
+      return { pataponName, rareponName, cur, tgt };
+    }
 
-        // 「現在レベル → 目標レベル」の場合のみ計算する
-        if (tgt <= cur) {
-          renderResultTable([]);
-          return;
-        }
+    function calculateRows({ pataponName, rareponName, cur, tgt }) {
+      const rareponConf = rareponMaster[rareponName];
+      if (!rareponConf) throw new Error("れあポン設定が見つかりません");
+      const pataponConf = pataponMaster[pataponName];
+      if (!pataponConf) throw new Error("パタポン設定が見つかりません");
 
-        const rows = [];
+      // 「現在レベル → 目標レベル」の場合のみ計算する（想定内ケース）
+      if (tgt <= cur) return [];
 
-        // 素材1〜4
-        for (let i = 0; i < CONFIG.materialSlots; i++) {
-          const matType = pataponConf.materials[i];
-          const matRank = parseInt(rareponConf.materials[i], 10);
-          const matName = getMaterialName(materialMaster, matType, matRank);
+      const rows = [];
 
-          const startLv = CONFIG.materialStartLevels[i];
-          const need = requiredMaterialBetween(matRank, startLv, cur, tgt);
-          if (need <= 0) continue;
-          rows.push({// 素材名はマスタから取得（見つからない場合は種類名でフォールバック）
-            name: matName,
-            rank: matRank,
-            need,
-          });
-        }
+      // 素材1〜4
+      for (let i = 0; i < CONFIG.materialSlots; i++) {
+        const matType = pataponConf.materials[i];
+        const matRank = parseInt(rareponConf.materials[i], 10);
+        const matName = getMaterialName(materialMaster, matType, matRank);
 
-        // チャリン（パタポン倍率を適用）
-        const patponMult = Number(pataponConf.charinMultiplier ?? 1);
-        const rareponMult = Number(rareponConf.charinMultiplier ?? 1);
-        const need = requiredCharinBetween(patponMult, rareponMult, cur, tgt);
+        const startLv = CONFIG.materialStartLevels[i];
+        const need = requiredMaterialBetween(matRank, startLv, cur, tgt);
+        if (need <= 0) continue;
+
         rows.push({
-          name: "チャリン",
-          rank: null,
+          // 素材名はマスタから取得（見つからない場合は種類名でフォールバック）
+          name: matName,
+          rank: matRank,
           need,
         });
+      }
 
+      // チャリン（パタポン倍率を適用）
+      const patponMult = Number(pataponConf.charinMultiplier ?? 1);
+      const rareponMult = Number(rareponConf.charinMultiplier ?? 1);
+      const needCharin = requiredCharinBetween(patponMult, rareponMult, cur, tgt);
+      rows.push({
+        name: "チャリン",
+        rank: null,
+        need: needCharin,
+      });
+
+      return rows;
+    }
+
+    const calcAndRender = () => {
+      try {
+        const inputs = readInputs();
+        const rows = calculateRows(inputs);
         renderResultTable(rows);
       } catch (e) {
         console.error(e);
         setError("計算失敗");
+        renderResultTable([]);
       }
     };
 
