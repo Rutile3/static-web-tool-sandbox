@@ -283,24 +283,21 @@
         const cur = parseInt(ui.curSel.value, 10);
         const tgt = parseInt(ui.tgtSel.value, 10);
 
-        const rareConf = rareponMaster[rareponName];
-        if (!rareConf) throw new Error("れあポン設定が見つかりません");
+        const rareponConf = rareponMaster[rareponName];
+        if (!rareponConf) throw new Error("れあポン設定が見つかりません");
 
-        const patConf = pataponMaster[pataponName];
-        if (!patConf) throw new Error("パタポン設定が見つかりません");
-
-        const materials = rareConf.materials;
-        const baseCharin = rareConf.charin;
+        const patponConf = pataponMaster[pataponName];
+        if (!patponConf) throw new Error("パタポン設定が見つかりません");
 
         const rows = [];
 
         // 素材1〜4
         for (let i = 0; i < CONFIG.materialSlots; i++) {
-          const rank = parseInt(materials[i], 10);
+          const rank = parseInt(rareponConf.materials[i], 10);
           const startLv = CONFIG.materialStartLevels[i];
           const need = requiredMaterialBetween(rank, startLv, cur, tgt);
           if (need <= 0) continue;
-          const matType = patConf.materials[i];
+          const matType = patponConf.materials[i];
           const matName = getMaterialName(materialMaster, matType, rank);
           rows.push({// 素材名はマスタから取得（見つからない場合は種類名でフォールバック）
             name: matName || `素材${i + 1}（${matType}）`,
@@ -310,8 +307,8 @@
         }
 
         // チャリン（パタポン倍率を適用）
-        const base = parseInt(baseCharin, 10);
-        const mult = Number(patConf.charinMultiplier ?? 1);
+        const base = parseInt(rareponConf.charin, 10);
+        const mult = Number(patponConf.charinMultiplier ?? 1);
         const needCharin = requiredCharinBetween(base, mult, cur, tgt); // 必ず整数になる
         rows.push({
           name: "チャリン",
