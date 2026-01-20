@@ -8,9 +8,23 @@
   const PATAPON_MASTER_JSON_PATH = "./data/patapon_master.json";
   const MATERIAL_MASTER_JSON_PATH = "./data/material_master.json";
 
-  // 素材ごとの要求開始レベル（ゲーム仕様）
-  // 素材1/2: Lv1から、素材3: Lv3から、素材4: Lv6から
-  const MATERIAL_START_LEVELS = [1, 1, 3, 6];
+  // -----------------------------
+  // 設定値
+  // -----------------------------
+  const CONFIG = {
+    // 素材スロット数（素材1〜N）
+    materialSlots: 4,
+    // 素材ごとの要求開始レベル（ゲーム仕様）
+    // 素材1/2: Lv1から、素材3: Lv3から、素材4: Lv6から
+    materialStartLevels: [1, 1, 3, 6],
+    // レベル選択肢（UI）
+    level: {
+      curMin: 0,
+      curMax: 9,   // Lv10は「これ以上上げない」前提で選択肢から除外
+      tgtMin: 1,
+      tgtMax: 10,
+    },
+  };
 
   // -----------------------------
   // 数学ロジック
@@ -42,7 +56,7 @@
    *  - level=3    => 1（ここで1からカウント開始）
    *  - level=10   => 8
    */
-  function effectiveLevel(level, startLv) {
+  function toEffectiveLevel(level, startLv) {
     return Math.max(0, level - (startLv - 1));
   }
 
@@ -52,67 +66,52 @@
    * ただし cur' / tgt' は startLv を原点にした有効レベル
    */
   function requiredMaterialBetween(rank, startLv, cur, tgt) {
-    if (![rank, startLv, cur, tgt].every(Number.isInteger))
-      throw new Error("入力は整数である必要があります");
-    if (rank <= 0) throw new Error("rank は1以上である必要があります");
-    if (startLv <= 0) throw new Error("startLv は1以上である必要があります");
-    if (cur < 0 || tgt < 0)
-      throw new Error("level は0以上である必要があります");
+    if (!Number.isInteger(rank) || rank <= 0)
+      throw new Error("rank は正の整数である必要があります");
+    if (!Number.isInteger(startLv) || startLv < 1)
+      throw new Error("startLv は1以上の整数である必要があります");
+    if (!Number.isInteger(cur) || cur < 0)
+      throw new Error("cur は0以上の整数である必要があります");
+    if (!Number.isInteger(tgt) || tgt < 1)
+      throw new Error("tgt は1以上の整数である必要があります");
+    if (tgt <= cur)
+      return 0;
 
-    const lo = Math.min(cur, tgt);
-    const hi = Math.max(cur, tgt);
-
-    const curEff = effectiveLevel(lo, startLv);
-    const tgtEff = effectiveLevel(hi, startLv);
+    const curEff = toEffectiveLevel(cur, startLv);
+    const tgtEff = toEffectiveLevel(tgt, startLv);
 
     if (tgtEff <= curEff) return 0;
     return cumulativeRequired(rank, tgtEff) - cumulativeRequired(rank, curEff);
   }
 
   /**
-   * 三角数 T(n)=1+2+...+n（n>=0）
+   * チャリン必要数を求める。
    */
-  function tri(n) {
-    if (!Number.isInteger(n) || n < 0)
-      throw new Error("tri の引数は0以上の整数が必要です");
-    return (n * (n + 1)) / 2;
+  function requiredCharinBetween(pataponMult, rareponMult, cur, tgt) {
+    if (pataponMult < 1)
+      throw new Error("pataponMult は1以上である必要があります");
+    if (rareponMult < 1)
+      throw new Error("rareponMult は1以上である必要があります");
+    if (!Number.isInteger(cur) || cur < 0)
+      throw new Error("cur は0以上の整数である必要があります");
+    if (!Number.isInteger(tgt) || tgt < 1)
+      throw new Error("tgt は1以上の整数である必要があります");
+    if (tgt <= cur)
+      return 0;
+
+    let sum = 0;
+    for (let lv = cur + 1; lv <= tgt; lv++) {
+      sum += (pataponMult * rareponMult) * lv;
+    }
+    return sum;
   }
 
-  /**
-   * チャリン必要数：base × ((lo+1)+...+hi)
-   */
-  function requiredCharinBetween(base, cur, tgt) {
-    if (!Number.isInteger(base) || base < 0)
-      throw new Error("base は0以上の整数が必要です");
-    if (!Number.isInteger(cur) || !Number.isInteger(tgt))
-      throw new Error("level は整数である必要があります");
-    if (cur < 0 || tgt < 0)
-      throw new Error("level は0以上の整数である必要があります");
-
-    const lo = Math.min(cur, tgt);
-    const hi = Math.max(cur, tgt);
-
-    // (lo+1)+...+hi = T(hi) - T(lo)
-    return base * (tri(hi) - tri(lo));
-  }
 
   // -----------------------------
   // マスタ読み込み
   // -----------------------------
-  async function loadRareponMaster() {
-    const res = await fetch(RAREPON_MASTER_JSON_PATH, { cache: "no-cache" });
-    if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
-    return await res.json();
-  }
-
-  async function loadPataponMaster() {
-    const res = await fetch(PATAPON_MASTER_JSON_PATH, { cache: "no-cache" });
-    if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
-    return await res.json();
-  }
-
-  async function loadMaterialMaster() {
-    const res = await fetch(MATERIAL_MASTER_JSON_PATH, { cache: "no-cache" });
+  async function fetchMasterJsonNoCache(path) {
+    const res = await fetch(path, { cache: "no-cache" });
     if (!res.ok) throw new Error(`マスタ読込に失敗しました: ${res.status}`);
     return await res.json();
   }
@@ -121,6 +120,27 @@
   // UI
   // -----------------------------
   const $ = (id) => document.getElementById(id);
+
+  // DOM参照のキャッシュ
+  const ui = {
+    pataponSel: $("patapon"),
+    rareponSel: $("rarepon"),
+    curSel: $("curLevel"),
+    tgtSel: $("tgtLevel"),
+    btnCalc: $("btnCalc"),
+    resultTbody: $("resultTableBody"),
+  };
+
+  function assertUi() {
+    const missing = Object.entries(ui)
+      .filter(([, el]) => !el)
+      .map(([k]) => k);
+    if (missing.length) {
+      console.error("必須の要素が見つかりません: " + missing.join(", "));
+      return false;
+    }
+    return true;
+  }
 
   function fillSelectRange(selectEl, start, end) {
     selectEl.innerHTML = "";
@@ -132,17 +152,7 @@
     }
   }
 
-  function fillPataponSelect(selectEl, master) {
-    selectEl.innerHTML = "";
-    Object.keys(master).forEach((name) => {
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      selectEl.appendChild(opt);
-    });
-  }
-
-  function fillRareponSelect(selectEl, master) {
+  function fillSelectMasterName(selectEl, master) {
     selectEl.innerHTML = "";
     Object.keys(master).forEach((name) => {
       const opt = document.createElement("option");
@@ -153,31 +163,23 @@
   }
 
   function getMaterialName(materialMaster, materialType, rank) {
-    if (!materialMaster) return "";
-    const mat = materialMaster[String(materialType)];
-    if (!mat || !mat.ranks) return "";
-    return mat.ranks[String(rank)] || "";
+    const name = materialMaster?.[String(materialType)]?.ranks?.[String(rank)];
+    return name ?? `${materialType}（ランク${rank}）`;
   }
 
-  // ランクに応じた文字色（ランク1はデフォルト）
-  function rankToColor(rank) {
+  // ランクに応じたCSSクラス（ランク1は指定なし）
+  function rankToClass(rank) {
     switch (Number(rank)) {
-      case 2:
-        return "green";
-      case 3:
-        return "red";
-      case 4:
-        return "orange";
-      case 5:
-        return "purple";
-      default:
-        return null;
+      case 2: return "rank-2";
+      case 3: return "rank-3";
+      case 4: return "rank-4";
+      case 5: return "rank-5";
+      default: return null;
     }
   }
 
-
-  function setResultTable(rows) {
-    const tbody = $("resultTableBody");
+  function renderResultTable(rows) {
+    const tbody = ui.resultTbody;
     if (!tbody) return;
 
     tbody.innerHTML = "";
@@ -201,8 +203,8 @@
       td1.textContent = r.name;
 
 
-      const c = rankToColor(r.rank);
-      if (c) td1.style.color = c;
+      const cls = rankToClass(r.rank);
+      if (cls) td1.classList.add(cls);
       const td2 = document.createElement("td");
       td2.className = "text-center";
       td2.textContent = String(r.need);
@@ -214,7 +216,7 @@
   }
 
   function setError(message) {
-    setResultTable([
+    renderResultTable([
       {
         name: "エラー",
         need: message || "計算に失敗しました",
@@ -223,22 +225,10 @@
   }
 
   async function init() {
-    const pataponSel = $("patapon");
-    const rareponSel = $("rarepon");
-    const curSel = $("curLevel");
-    const tgtSel = $("tgtLevel");
-    const btn = $("btnCalc");
-
-    if (!pataponSel || !rareponSel || !curSel || !tgtSel || !btn) {
-      console.error(
-        "必須の要素が見つかりません（patapon/rarepon/curLevel/tgtLevel/btnCalc）"
-      );
-      return;
-    }
-
+    if (!assertUi()) return;
     // レベル選択肢
-    fillSelectRange(curSel, 0, 9);
-    fillSelectRange(tgtSel, 1, 10);
+    fillSelectRange(ui.curSel, CONFIG.level.curMin, CONFIG.level.curMax);
+    fillSelectRange(ui.tgtSel, CONFIG.level.tgtMin, CONFIG.level.tgtMax);
 
     // マスタ読み込み → れあポンセレクト構築
     let rareponMaster;
@@ -246,12 +236,12 @@
     let materialMaster;
     try {
       [rareponMaster, pataponMaster, materialMaster] = await Promise.all([
-        loadRareponMaster(),
-        loadPataponMaster(),
-        loadMaterialMaster(),
+        fetchMasterJsonNoCache(RAREPON_MASTER_JSON_PATH),
+        fetchMasterJsonNoCache(PATAPON_MASTER_JSON_PATH),
+        fetchMasterJsonNoCache(MATERIAL_MASTER_JSON_PATH),
       ]);
-      fillRareponSelect(rareponSel, rareponMaster);
-      fillPataponSelect(pataponSel, pataponMaster);
+      fillSelectMasterName(ui.rareponSel, rareponMaster);
+      fillSelectMasterName(ui.pataponSel, pataponMaster);
     } catch (e) {
       console.error(e);
       setError("マスタ読み込み失敗");
@@ -259,75 +249,86 @@
     }
 
     // 初期値
-    curSel.value = "0";
-    tgtSel.value = "10";
-    if (pataponSel.options.length > 0) pataponSel.selectedIndex = 0;
-    if (rareponSel.options.length > 0) rareponSel.selectedIndex = 0;
+    ui.curSel.value = "0";
+    ui.tgtSel.value = "10";
+    if (ui.pataponSel.options.length > 0) ui.pataponSel.selectedIndex = 0;
+    if (ui.rareponSel.options.length > 0) ui.rareponSel.selectedIndex = 0;
+
+    function readInputs() {
+      const pataponName = ui.pataponSel.value;
+      const rareponName = ui.rareponSel.value;
+      const cur = parseInt(ui.curSel.value, 10);
+      const tgt = parseInt(ui.tgtSel.value, 10);
+
+      if (!Number.isInteger(cur) || !Number.isInteger(tgt))
+        throw new Error("レベルは整数である必要があります");
+      return { pataponName, rareponName, cur, tgt };
+    }
+
+    function calculateRows({ pataponName, rareponName, cur, tgt }) {
+      const rareponConf = rareponMaster[rareponName];
+      if (!rareponConf) throw new Error("れあポン設定が見つかりません");
+      const pataponConf = pataponMaster[pataponName];
+      if (!pataponConf) throw new Error("パタポン設定が見つかりません");
+
+      // 「現在レベル → 目標レベル」の場合のみ計算する（想定内ケース）
+      if (tgt <= cur) return [];
+
+      const rows = [];
+
+      // 素材1〜4
+      for (let i = 0; i < CONFIG.materialSlots; i++) {
+        const matType = pataponConf.materials[i];
+        const matRank = parseInt(rareponConf.materials[i], 10);
+        const matName = getMaterialName(materialMaster, matType, matRank);
+
+        const startLv = CONFIG.materialStartLevels[i];
+        const need = requiredMaterialBetween(matRank, startLv, cur, tgt);
+        if (need <= 0) continue;
+
+        rows.push({
+          // 素材名はマスタから取得（見つからない場合は種類名でフォールバック）
+          name: matName,
+          rank: matRank,
+          need,
+        });
+      }
+
+      // チャリン（パタポン倍率を適用）
+      const patponMult = Number(pataponConf.charinMultiplier ?? 1);
+      const rareponMult = Number(rareponConf.charinMultiplier ?? 1);
+      const needCharin = requiredCharinBetween(patponMult, rareponMult, cur, tgt);
+      rows.push({
+        name: "チャリン",
+        rank: null,
+        need: needCharin,
+      });
+
+      return rows;
+    }
 
     const calcAndRender = () => {
       try {
-        const pataponName = pataponSel.value;
-        const rareponName = rareponSel.value;
-        const cur = parseInt(curSel.value, 10);
-        const tgt = parseInt(tgtSel.value, 10);
-
-        const rareConf = rareponMaster[rareponName];
-        if (!rareConf) throw new Error("れあポン設定が見つかりません");
-
-        const patConf = pataponMaster[pataponName];
-        if (!patConf) throw new Error("パタポン設定が見つかりません");
-
-        const materials = rareConf.materials;
-        const baseCharin = rareConf.charin;
-
-        const rows = [];
-
-        // 素材1〜4
-        for (let i = 0; i < 4; i++) {
-          const rank = parseInt(materials[i], 10);
-          const startLv = MATERIAL_START_LEVELS[i];
-          const need = requiredMaterialBetween(rank, startLv, cur, tgt);
-          if (need <= 0) continue;
-          const matType = patConf.materials[i];
-          const matName = getMaterialName(materialMaster, matType, rank);
-          rows.push({// 素材名はマスタから取得（見つからない場合は種類名でフォールバック）
-            name: matName || `素材${i + 1}（${matType}）`,
-            rank,
-            need,
-          });
-        }
-
-        // チャリン（パタポン倍率を適用）
-        const base = parseInt(baseCharin, 10);
-        const needCharinRaw = requiredCharinBetween(base, cur, tgt);
-        const mult = Number(patConf.charinMultiplier ?? 1);
-        // 端数が出る可能性があるため、最終結果は四捨五入して整数化
-        const needCharin = Math.round(needCharinRaw * mult);
-        const multLabel = Number.isFinite(mult) ? String(mult) : "1";
-        rows.push({
-          name: "チャリン",
-          rank: null,
-          need: needCharin,
-        });
-
-        setResultTable(rows);
+        const inputs = readInputs();
+        const rows = calculateRows(inputs);
+        renderResultTable(rows);
       } catch (e) {
         console.error(e);
         setError("計算失敗");
+        renderResultTable([]);
       }
     };
 
-    btn.addEventListener("click", calcAndRender);
+    ui.btnCalc.addEventListener("click", calcAndRender);
 
-    // UX: 変更したら表示をリセット
-    const reset = () => setResultTable([]);
-    pataponSel.addEventListener("change", reset);
-    rareponSel.addEventListener("change", reset);
-    curSel.addEventListener("change", reset);
-    tgtSel.addEventListener("change", reset);
+    // UX: 変更したら表示を即時更新
+    ui.pataponSel.addEventListener("change", calcAndRender);
+    ui.rareponSel.addEventListener("change", calcAndRender);
+    ui.curSel.addEventListener("change", calcAndRender);
+    ui.tgtSel.addEventListener("change", calcAndRender);
 
-    // 初期表示は未計算
-    setResultTable([]);
+    // 初期表示
+    calcAndRender();
   }
 
   document.addEventListener("DOMContentLoaded", () => {
