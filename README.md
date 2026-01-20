@@ -30,6 +30,11 @@
 - [tileset-maker](https://rutile3.github.io/static-web-tool-sandbox/tileset-maker/)
 - 複数の **PNG画像ファイル** を読み込み、1枚の タイルセット画像（スプライトアトラス） に結合するWebツールです。
 
+### 多角数 計算ツール
+
+- [polygonal-number-calculator](https://rutile3.github.io/static-web-tool-sandbox/polygonal-number-calculator/)
+- k角数/中心付きk角数の一般式に基づき、kとnを入力して値と式、簡易図形の可視化を行うWebツールです。
+
 ### URLエンコード・デコードツール
 
 - [url-encode-decode-tool](https://rutile3.github.io/static-web-tool-sandbox/url-encode-decode-tool/)
