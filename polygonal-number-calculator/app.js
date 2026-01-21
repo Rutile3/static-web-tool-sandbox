@@ -9,7 +9,6 @@
     - 一般式
     - 代入した式
     - 解
-    - 点の数を可視化する簡易図
 
   実装メモ:
     - BigIntで計算し、オーバーフローを回避
@@ -33,12 +32,6 @@
   const selectedFormulaEl = document.getElementById('selectedFormula');
   const substitutedFormulaEl = document.getElementById('substitutedFormula');
   const resultValueEl = document.getElementById('resultValue');
-
-  /** @type {HTMLInputElement} */
-  const scaleInput = document.getElementById('scaleInput');
-  /** @type {HTMLCanvasElement} */
-  const canvas = document.getElementById('viz');
-  const ctx = canvas.getContext('2d');
 
   const FORMULA_NORMAL = 'P(k, n) = ((k − 2)n² − (k − 4)n) / 2';
   const FORMULA_CENTERED = 'C(k, n) = 1 + k n (n − 1) / 2';
@@ -104,92 +97,6 @@
     resultValueEl.textContent = `P(${k}, ${n}) = ${formatBigInt(value)}`;
   }
 
-  function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // 背景はCSSで白だが、透過対策として塗っておく
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#000000';
-  }
-
-  function drawDot(x, y, r) {
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  function drawCentered(k, n, scale) {
-    // 中心 + リング（層）
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
-    const rDot = 2.2 * scale;
-    const baseRadius = 22 * scale;
-
-    drawDot(cx, cy, rDot);
-    const MAX_POINTS_PER_RING = 2500; // 描画負荷対策
-    for (let layer = 2; layer <= n; layer++) {
-      const cntRaw = k * (layer - 1);
-      const cnt = Math.min(cntRaw, MAX_POINTS_PER_RING);
-      const radius = baseRadius * (layer - 1);
-      for (let i = 0; i < cnt; i++) {
-        // cntRawが大きい場合は間引き（均等サンプリング）
-        const idx = cntRaw > cnt ? Math.floor((i * cntRaw) / cnt) : i;
-        const theta = (Math.PI * 2 * idx) / cntRaw;
-        const x = cx + Math.cos(theta) * radius;
-        const y = cy + Math.sin(theta) * radius;
-        drawDot(x, y, rDot);
-      }
-    }
-  }
-
-  function diffPolygonal(k, n) {
-    // ΔP(k,n) = P(k,n) - P(k,n-1)
-    // BigIntで返す
-    if (n <= 1) return 1n;
-    const kb = BigInt(k);
-    const nb = BigInt(n);
-    return polygonal(kb, nb) - polygonal(kb, nb - 1n);
-  }
-
-  function drawNormalLayered(k, n, scale) {
-    // 通常のk角数は「厳密な幾何配置」を作るのが重いので、
-    // 増分(階差)を層として横並びに描く。
-    // layer=1..n の点数 = ΔP(k,layer)
-
-    const pad = 16 * scale;
-    const rDot = 2.0 * scale;
-    const gap = 7.5 * scale;
-    const rowGap = 12 * scale;
-
-    let y = pad;
-    const MAX_DOTS_TOTAL = 7000; // 描画負荷対策（全体）
-    let drawn = 0;
-    for (let layer = 1; layer <= n; layer++) {
-      const diff = diffPolygonal(k, layer);
-      // diffが巨大な場合は「点を全部描く」こと自体が非現実なので間引く
-      const cnt = diff > BigInt(MAX_DOTS_TOTAL) ? MAX_DOTS_TOTAL : Number(diff);
-      // 1行に収まらない場合は折り返し（row=複数行）
-      const maxPerRow = Math.max(1, Math.floor((canvas.width - pad * 2) / gap));
-      let remaining = cnt;
-      while (remaining > 0) {
-        const take = Math.min(remaining, maxPerRow);
-        const rowWidth = (take - 1) * gap;
-        const x0 = (canvas.width - rowWidth) / 2;
-        for (let i = 0; i < take; i++) {
-          drawDot(x0 + i * gap, y, rDot);
-          drawn++;
-          if (drawn >= MAX_DOTS_TOTAL) return;
-        }
-        remaining -= take;
-        y += rowGap;
-        // 画面をはみ出す場合は打ち切り（UIの入力制約で過度なケースは避ける）
-        if (y > canvas.height - pad) return;
-      }
-      y += rowGap * 0.6;
-      if (y > canvas.height - pad) return;
-    }
-  }
-
   function render() {
     const k = clampInt(kInput.value, 3, 1_000_000);
     const n = clampInt(nInput.value, 1, 2000);
@@ -207,21 +114,12 @@
       : polygonal(kb, nb);
 
     renderText(mode, k, n, value);
-
-    clearCanvas();
-    const scale = clampInt(scaleInput.value, 1, 6);
-    if (mode === 'centered') {
-      drawCentered(k, n, scale);
-    } else {
-      drawNormalLayered(k, n, scale);
-    }
   }
 
   function reset() {
     kInput.value = '3';
     nInput.value = '1';
     centerOff.checked = true;
-    scaleInput.value = '3';
     render();
   }
 
@@ -230,7 +128,7 @@
   resetBtn.addEventListener('click', reset);
 
   // 入力変更で即時反映（軽い処理なので）
-  [kInput, nInput, centerOff, centerOn, scaleInput].forEach(el => {
+  [kInput, nInput, centerOff, centerOn].forEach(el => {
     el.addEventListener('input', render);
     el.addEventListener('change', render);
   });

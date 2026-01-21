@@ -26,13 +26,6 @@ body {
     font-weight: 700;
 }
 
-.viz {
-    width: 100%;
-    height: auto;
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid rgba(0,0,0,.08);
-}
 
 .mono {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Roboto Mono",
