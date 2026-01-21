@@ -40,8 +40,8 @@
 
     <main class="flex-fill container-md my-4">
         <div class="row g-4">
-            <!-- Inputs -->
-            <div class="col-lg-5">
+            <!-- 入力 -->
+            <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light fw-semibold">入力</div>
                     <div class="card-body">
@@ -75,26 +75,10 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card shadow-sm mt-4">
-                    <div class="card-header bg-light fw-semibold">式（一般形）</div>
-                    <div class="card-body mono small">
-                        <div class="mb-2">
-                            <div class="fw-semibold">中心なし（通常の k 角数）</div>
-                            <div class="formula">P(k, n) = ((k − 2)n² − (k − 4)n) / 2</div>
-                        </div>
-                        <hr>
-                        <div>
-                            <div class="fw-semibold">中心あり（中心付き k 角数）</div>
-                            <div class="formula">C(k, n) = 1 + k n (n − 1) / 2</div>
-                            <div class="text-muted">※ご提示の式「C(k,n)=kn(n−1)/2+1」はこちらです。</div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- Outputs -->
-            <div class="col-lg-7">
+            <!-- 出力 -->
+            <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light fw-semibold">出力</div>
                     <div class="card-body">
@@ -111,6 +95,25 @@
                         <div class="mb-3">
                             <div class="fw-semibold">解</div>
                             <div id="resultValue" class="mono result"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 式（一般形） -->
+            <div class="col-12">
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-light fw-semibold">式（一般形）</div>
+                    <div class="card-body mono small">
+                        <div class="mb-2">
+                            <div class="fw-semibold">中心なし（通常の k 角数）</div>
+                            <div class="formula">P(k, n) = ((k − 2)n² − (k − 4)n) / 2</div>
+                        </div>
+                        <hr>
+                        <div>
+                            <div class="fw-semibold">中心あり（中心付き k 角数）</div>
+                            <div class="formula">C(k, n) = 1 + k n (n − 1) / 2</div>
+                            <div class="text-muted">※ご提示の式「C(k,n)=kn(n−1)/2+1」はこちらです。</div>
                         </div>
                     </div>
                 </div>
