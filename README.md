@@ -20,6 +20,11 @@
 - [kana-to-romaji](https://rutile3.github.io/static-web-tool-sandbox/kana-to-romaji/)
 - 「ひらがな」または「カタカナ」で入力された文字列を、**日本式・外務省ヘボン式・訓令式・駅名標ヘボン式** の4方式で同時にローマ字表記へ変換するWebツールです。
 
+### 多角数 計算ツール
+
+- [polygonal-number-calculator](https://rutile3.github.io/static-web-tool-sandbox/polygonal-number-calculator/)
+- k角数/中心付きk角数の一般式に基づき、kとnを入力して値と式、簡易図形の可視化を行うWebツールです。
+
 ### 楽天証券CSV 取得額（元本）遷移ビューア
 
 - [principal-tracker](https://rutile3.github.io/static-web-tool-sandbox/principal-tracker/)
@@ -29,11 +34,6 @@
 
 - [tileset-maker](https://rutile3.github.io/static-web-tool-sandbox/tileset-maker/)
 - 複数の **PNG画像ファイル** を読み込み、1枚の タイルセット画像（スプライトアトラス） に結合するWebツールです。
-
-### 多角数 計算ツール
-
-- [polygonal-number-calculator](https://rutile3.github.io/static-web-tool-sandbox/polygonal-number-calculator/)
-- k角数/中心付きk角数の一般式に基づき、kとnを入力して値と式、簡易図形の可視化を行うWebツールです。
 
 ### URLエンコード・デコードツール
 
