@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+
+    <title>MP3タグ編集ツール</title>
+    <link rel="icon" href="favicon.png" type="image/png" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-501GNTE7BK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-501GNTE7BK');
+    </script>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <header class="navbar navbar-dark bg-brand shadow-sm">
+        <div class="container-md d-flex align-items-center">
+            <a href="" class="navbar-brand fw-bold">MP3タグ編集ツール</a>
+            <a href="https://link-hub.rutile3.com/" target="_blank"
+                class="d-flex align-items-center text-decoration-none ms-auto">
+                <span class="text-white-50 small ms-auto">by Rutile3</span>
+                <img src="avatar.png" alt="Avatar" class="avatar ms-2">
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-fill container-md my-4">
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-semibold">ファイル選択</div>
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <input id="fileInput" type="file" class="form-control" accept="audio/mpeg,.mp3" multiple>
+                            <button id="clearBtn" class="btn btn-outline-secondary" type="button" disabled>クリア</button>
+                        </div>
+                        <div class="mt-3 small text-secondary">
+                            <ul class="mb-0">
+                                <li>ブラウザ上でMP3（ID3タグ）を読み取り、編集後のファイルを<strong>新規ダウンロード</strong>します（元ファイルは上書きできません）。</li>
+                                <li>タイトル / アーティスト / アルバム / トラック / 年 / ジャンル を編集できます。</li>
+                                <li>一部のMP3やタグ形式によっては読み取りできない場合があります。</li>
+                            </ul>
+                        </div>
+                        <div id="status" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-semibold">一括編集</div>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label">アーティスト（選択中に適用）</label>
+                                <input id="bulkArtist" class="form-control" placeholder="例）Various Artists">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">アルバム（選択中に適用）</label>
+                                <input id="bulkAlbum" class="form-control" placeholder="例）My Album">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">年（選択中に適用）</label>
+                                <input id="bulkYear" class="form-control" inputmode="numeric" placeholder="例）2026">
+                            </div>
+                        </div>
+                        <div class="mt-3 d-flex flex-wrap gap-2">
+                            <button id="applyBulkBtn" class="btn btn-primary" type="button" disabled>選択中に反映</button>
+                            <button id="selectAllBtn" class="btn btn-outline-primary" type="button" disabled>全て選択</button>
+                            <button id="deselectAllBtn" class="btn btn-outline-secondary" type="button" disabled>全て解除</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-semibold d-flex align-items-center">
+                        <span>編集（複数ファイル対応）</span>
+                        <div class="ms-auto d-flex gap-2">
+                            <button id="downloadSelectedBtn" class="btn btn-success btn-sm" type="button" disabled>選択分をDL</button>
+                            <button id="downloadAllBtn" class="btn btn-outline-success btn-sm" type="button" disabled>全てDL</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead>
+                                    <tr>
+                                        <th style="width:2.5rem;"><input id="headerSelect" type="checkbox" class="form-check-input" disabled></th>
+                                        <th style="min-width:220px;">ファイル</th>
+                                        <th style="min-width:180px;">タイトル</th>
+                                        <th style="min-width:180px;">アーティスト</th>
+                                        <th style="min-width:180px;">アルバム</th>
+                                        <th style="width:110px;">トラック</th>
+                                        <th style="width:110px;">年</th>
+                                        <th style="min-width:140px;">ジャンル</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <tr>
+                                        <td colspan="8" class="text-secondary">MP3を選択するとここに一覧表示されます。</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="small text-secondary">
+                            変更した内容は、上部の「DL」ボタンでMP3に書き込み、ダウンロードできます。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer py-3 bg-brand text-white-50">
+        <div class="container-md small">
+            <span>© 2025 Rutile3 | MIT License</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- Tag reader / writer (client-side) -->
+    <script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/browser-id3-writer@6.0.0/dist/browser-id3-writer.umd.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

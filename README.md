@@ -20,6 +20,11 @@
 - [kana-to-romaji](https://rutile3.github.io/static-web-tool-sandbox/kana-to-romaji/)
 - 「ひらがな」または「カタカナ」で入力された文字列を、**日本式・外務省ヘボン式・訓令式・駅名標ヘボン式** の4方式で同時にローマ字表記へ変換するWebツールです。
 
+### MP3タグ編集ツール
+
+- [mp3-tag-editor](https://rutile3.github.io/static-web-tool-sandbox/mp3-tag-editor/)
+- 複数の **MP3ファイル** を読み込み、、タグを一覧で同時編集できるWebツールです。
+
 ### PDFメタデータ編集ツール
 
 - [pdf-metadata-editor](https://rutile3.github.io/static-web-tool-sandbox/pdf-metadata-editor/)
