@@ -1,0 +1,50 @@
+:root {
+    --brand: rgba(219, 169, 39, .8);
+}
+
+.bg-brand {
+    background: var(--brand);
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+}
+
+body {
+    background: #efefef;
+}
+
+table input.form-control {
+    min-height: 30px;
+    padding-top: .2rem;
+    padding-bottom: .2rem;
+}
+
+.file-meta {
+    line-height: 1.1;
+}
+
+.file-meta .name {
+    font-weight: 600;
+}
+
+.file-meta .sub {
+    color: rgba(0, 0, 0, .55);
+    font-size: .85rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    body { background: #111; }
+    .file-meta .sub { color: rgba(255, 255, 255, .65); }
+}
+
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Roboto Mono",
+        "Source Code Pro", "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace;
+}
+
+.small {
+    font-size: .9rem;
+}

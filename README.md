@@ -20,6 +20,11 @@
 - [kana-to-romaji](https://rutile3.github.io/static-web-tool-sandbox/kana-to-romaji/)
 - 「ひらがな」または「カタカナ」で入力された文字列を、**日本式・外務省ヘボン式・訓令式・駅名標ヘボン式** の4方式で同時にローマ字表記へ変換するWebツールです。
 
+### PDFメタデータ編集ツール
+
+- [pdf-metadata-editor](https://rutile3.github.io/static-web-tool-sandbox/pdf-metadata-editor/)
+- 複数の **PDFファイル** を読み込み、、メタデータを一覧で同時編集できるWebツールです。
+
 ### 多角数 計算ツール
 
 - [polygonal-number-calculator](https://rutile3.github.io/static-web-tool-sandbox/polygonal-number-calculator/)
@@ -28,7 +33,7 @@
 ### 楽天証券CSV 取得額（元本）遷移ビューア
 
 - [principal-tracker](https://rutile3.github.io/static-web-tool-sandbox/principal-tracker/)
-- 楽天証券でダウンロードできる 国内株式の取引履歴CSV から、株式投資の 取得額（投下元本）の時系列遷移 を算出・可視化するためのWebツールです。
+- 楽天証券でダウンロードできる 国内株式の取引履歴CSVから、株式投資の 取得額（投下元本）の時系列遷移 を算出・可視化するためのWebツールです。
 
 ### PNGタイルセット生成ツール
 
