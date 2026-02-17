@@ -40,6 +40,11 @@
 - [principal-tracker](https://rutile3.github.io/static-web-tool-sandbox/principal-tracker/)
 - 楽天証券でダウンロードできる 国内株式の取引履歴CSVから、株式投資の 取得額（投下元本）の時系列遷移 を算出・可視化するためのWebツールです。
 
+### 3色アルバムカバージェネレーター
+
+- [three-color-album-cover-generator](https://rutile3.github.io/static-web-tool-sandbox/three-color-album-cover-generator/)
+- 指定した **メインカラー / サブカラー / アクセントカラー** の3色で、某アルバムカバー風の抽象画像を生成し、PNG/SVGとして保存できるWebツールです。
+
 ### PNGタイルセット生成ツール
 
 - [tileset-maker](https://rutile3.github.io/static-web-tool-sandbox/tileset-maker/)
