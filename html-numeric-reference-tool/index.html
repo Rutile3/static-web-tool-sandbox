@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+
+    <title>HTML数値文字参照変換ツール</title>
+    <link rel="icon" href="favicon.png" type="image/png" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-501GNTE7BK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-501GNTE7BK');
+    </script>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <header class="navbar navbar-dark bg-brand shadow-sm">
+        <div class="container-md d-flex align-items-center gap-3">
+            <a href="" class="navbar-brand fw-bold">HTML数値文字参照変換ツール</a>
+            <a href="https://link-hub.rutile3.com/" target="_blank"
+                class="d-flex align-items-center text-decoration-none ms-auto">
+                <span class="text-white-50 small ms-auto">by Rutile3</span>
+                <img src="avatar.png" alt="Avatar" class="avatar ms-2">
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-fill container-md my-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-4">
+                        <label for="mode" class="form-label fw-semibold">変換モード</label>
+                        <select id="mode" class="form-select">
+                            <option value="encode" selected>文字 → HTML数値文字参照</option>
+                            <option value="decode">HTML数値文字参照 → 文字</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button id="swapButton" class="btn btn-outline-secondary" type="button">入出力を入れ替え</button>
+                            <button id="copyButton" class="btn btn-outline-primary" type="button">出力をコピー</button>
+                            <button id="clearButton" class="btn btn-outline-danger" type="button">クリア</button>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted small mb-0 mt-3">
+                    10進数（例: <code>&amp;#28450;</code>）と16進数（例: <code>&amp;#x6F22;</code>）の両方に対応しています。
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-light fw-semibold">入力</div>
+                    <div class="card-body">
+                        <textarea id="input" class="form-control mono" rows="18"
+                            placeholder="ここに変換したい文字列を入力してください"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-light fw-semibold">出力</div>
+                    <div class="card-body">
+                        <textarea id="output" class="form-control mono" rows="18" readonly
+                            placeholder="変換結果がここに表示されます"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer py-3 bg-brand text-white-50">
+        <div class="container-md small">
+            <span>© 2025 Rutile3 | MIT License</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -15,6 +15,12 @@
 - 工場自動化ゲーム（例：Factorio / Satisfactory / shapez / Immortality Factory など）のアイテム生産量計算とレシピ構造の可視化を支援するWebツールです。
 - 動作不安定
 
+### HTML数値文字参照変換ツール
+
+- [html-numeric-reference-tool](https://rutile3.github.io/static-web-tool-sandbox/html-numeric-reference-tool/)
+- 文字列と **HTML数値文字参照** を相互変換できるWebツールです。
+- 入力内容を10進数または16進数の数値文字参照に変換したり、数値文字参照を通常の文字列へ戻したりできます。
+
 ### かな → ローマ字 変換ツール
 
 - [kana-to-romaji](https://rutile3.github.io/static-web-tool-sandbox/kana-to-romaji/)
