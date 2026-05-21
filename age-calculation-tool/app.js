@@ -256,7 +256,7 @@
 
     function clearForm() {
         elements.birthDate.value = '';
-        elements.targetDate.value = getTodayString();
+        elements.targetDate.value = '';
         hideErrors();
         hideResult();
         elements.birthDate.focus();
