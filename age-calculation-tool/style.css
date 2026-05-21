@@ -1,0 +1,102 @@
+:root {
+    --brand: rgba(219, 169, 39, 0.8);
+    --surface: #ffffff;
+    --surface-muted: #f8f9fa;
+    --border: #dee2e6;
+    --text-muted: #6c757d;
+}
+
+.bg-brand {
+    background: var(--brand);
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+}
+
+body {
+    background: #efefef;
+}
+
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Roboto Mono",
+        "Source Code Pro", "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace;
+}
+
+.empty-state {
+    border: 1px dashed var(--border);
+    border-radius: .75rem;
+    background: var(--surface-muted);
+}
+
+.empty-state-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.result-card {
+    height: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    background: var(--surface);
+}
+
+.result-label {
+    margin-bottom: .35rem;
+    color: var(--text-muted);
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+.result-value {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.25;
+    word-break: keep-all;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --surface: #212529;
+        --surface-muted: #2b3035;
+        --border: #495057;
+        --text-muted: #adb5bd;
+    }
+
+    body {
+        background: #15171a;
+        color: #f8f9fa;
+    }
+
+    .card,
+    .result-card,
+    .empty-state {
+        background-color: var(--surface);
+        color: #f8f9fa;
+    }
+
+    .card-header.bg-light {
+        background-color: #2b3035 !important;
+        color: #f8f9fa;
+    }
+
+    .form-control,
+    .input-group-text {
+        background-color: #212529;
+        border-color: #495057;
+        color: #f8f9fa;
+    }
+
+    .form-control:focus {
+        background-color: #212529;
+        color: #f8f9fa;
+    }
+
+    .form-text,
+    .text-muted {
+        color: #adb5bd !important;
+    }
+}

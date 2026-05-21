@@ -9,6 +9,12 @@
 
 ## 一覧
 
+### 年齢計算ツール
+
+- [age-calculation-tool](https://rutile3.github.io/static-web-tool-sandbox/age-calculation-tool/)
+- 生年月日と基準日を入力することで、基準日時点の年齢を確認できるWebツールです。
+- 満年齢、数え年、生後日数、次の誕生日までの日数に対応しています。
+
 ### 生産ライン計算＆レシピ可視化ツール
 
 - [factory-planner](https://rutile3.github.io/static-web-tool-sandbox/factory-planner/)
