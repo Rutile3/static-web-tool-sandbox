@@ -2,6 +2,8 @@
     'use strict';
 
     const MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
+    const MIN_DATE = { year: 1900, month: 1, day: 1 };
+    const MAX_DATE = { year: 9999, month: 12, day: 31 };
 
     const elements = {
         form: document.getElementById('ageForm'),
@@ -96,24 +98,39 @@
         return day <= lastDay;
     }
 
+    function isDateWithinSupportedRange(date) {
+        return compareDate(date, MIN_DATE) >= 0 && compareDate(date, MAX_DATE) <= 0;
+    }
+
     function validateInput(birthDateValue, targetDateValue) {
         const errors = [];
         const birthDate = parseDateInput(birthDateValue);
         const targetDate = parseDateInput(targetDateValue);
+        
+        let canCompareBirthDate = false;
+        let canCompareTargetDate = false;
 
         if (!birthDateValue) {
             errors.push('生年月日を入力してください。');
         } else if (!birthDate) {
             errors.push('正しい生年月日を入力してください。');
+        } else if (!isDateWithinSupportedRange(birthDate)) {
+            errors.push('生年月日は1900-01-01から9999-12-31までの日付を入力してください。');
+        } else {
+            canCompareBirthDate = true;
         }
 
         if (!targetDateValue) {
             errors.push('基準日を入力してください。');
         } else if (!targetDate) {
             errors.push('正しい基準日を入力してください。');
+        } else if (!isDateWithinSupportedRange(targetDate)) {
+            errors.push('基準日は1900-01-01から9999-12-31までの日付を入力してください。');
+        } else {
+            canCompareTargetDate = true;
         }
 
-        if (birthDate && targetDate && compareDate(birthDate, targetDate) > 0) {
+        if (canCompareBirthDate && canCompareTargetDate && compareDate(birthDate, targetDate) > 0) {
             errors.push('生年月日は基準日以前の日付を入力してください。');
         }
 
@@ -280,6 +297,7 @@
     window.AgeCalculationTool = {
         parseDateInput,
         validateInput,
+        isDateWithinSupportedRange,
         calculateAgeInfo,
         calculateFullAge,
         calculateCountedAge,
