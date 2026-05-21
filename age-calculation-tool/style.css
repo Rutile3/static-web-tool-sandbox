@@ -39,10 +39,6 @@ body {
         "Source Code Pro", "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace;
 }
 
-.small {
-    font-size: .9rem;
-}
-
 .empty-state {
     border: 1px dashed var(--border);
     border-radius: .75rem;
