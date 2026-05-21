@@ -49,14 +49,17 @@
                         <form id="ageForm" novalidate>
                             <div class="mb-3">
                                 <label for="birthDate" class="form-label fw-semibold">生年月日</label>
-                                <input id="birthDate" name="birthDate" type="date" class="form-control" required>
+                                <div class="input-group">
+                                    <input id="birthDate" name="birthDate" type="date" class="form-control" required>
+                                    <button id="birthDateTodayButton" type="button" class="btn btn-outline-secondary">今日</button>
+                                </div>
                             </div>
 
                             <div class="mb-4">
                                 <label for="targetDate" class="form-label fw-semibold">基準日</label>
                                 <div class="input-group">
                                     <input id="targetDate" name="targetDate" type="date" class="form-control" required>
-                                    <button id="todayButton" type="button" class="btn btn-outline-secondary">今日</button>
+                                    <button id="targetDateTodayButton" type="button" class="btn btn-outline-secondary">今日</button>
                                 </div>
                             </div>
 

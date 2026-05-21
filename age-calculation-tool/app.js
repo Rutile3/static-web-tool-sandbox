@@ -6,8 +6,9 @@
     const elements = {
         form: document.getElementById('ageForm'),
         birthDate: document.getElementById('birthDate'),
+        birthDateTodayButton: document.getElementById('birthDateTodayButton'),
         targetDate: document.getElementById('targetDate'),
-        todayButton: document.getElementById('todayButton'),
+        targetDateTodayButton: document.getElementById('targetDateTodayButton'),
         clearButton: document.getElementById('clearButton'),
         errorArea: document.getElementById('errorArea'),
         emptyState: document.getElementById('emptyState'),
@@ -31,10 +32,18 @@
             calculateAndRender();
         });
 
-        elements.todayButton.addEventListener('click', () => {
+        elements.targetDateTodayButton.addEventListener('click', () => {
             elements.targetDate.value = getTodayString();
 
             if (!elements.resultArea.classList.contains('d-none') && elements.birthDate.value) {
+                calculateAndRender();
+            }
+        });
+
+        elements.birthDateTodayButton.addEventListener('click', () => {
+            elements.birthDate.value = getTodayString();
+
+            if (!elements.resultArea.classList.contains('d-none') && elements.targetDate.value) {
                 calculateAndRender();
             }
         });
