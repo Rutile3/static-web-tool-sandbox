@@ -43,7 +43,7 @@
                     <div class="card-header bg-light fw-semibold">入力</div>
                     <div class="card-body">
                         <p class="text-muted small mb-4">
-                            生年月日と基準日を入力すると、指定日時点の満年齢・数え年・生後日数・次の誕生日までの日数を計算します。
+                            生年月日と基準日を入力すると、年齢を計算します。
                         </p>
 
                         <form id="ageForm" novalidate>
@@ -58,7 +58,6 @@
                                     <input id="targetDate" name="targetDate" type="date" class="form-control" required>
                                     <button id="todayButton" type="button" class="btn btn-outline-secondary">今日</button>
                                 </div>
-                                <div class="form-text">基準日は、ページ表示時に今日の日付が自動設定されます。</div>
                             </div>
 
                             <div class="d-grid gap-2 d-sm-flex">
@@ -124,10 +123,9 @@
                     <div class="card-header bg-light fw-semibold">補足</div>
                     <div class="card-body small">
                         <ul class="mb-0">
-                            <li>満年齢は、誕生日を迎えるごとに1歳増える数え方です。</li>
-                            <li>数え年は、生まれた年を1歳とし、年が変わるごとに1歳増える数え方です。</li>
-                            <li>2月29日生まれの場合、うるう年ではない年の誕生日相当日は2月28日として計算します。</li>
-                            <li>入力された生年月日は保存されず、計算はブラウザ内で完結します。</li>
+                            <li>満年齢は、生まれた時を0歳とし、誕生日を迎えるごとに1歳増える数え方です。</li>
+                            <li>数え年は、生まれた時を1歳とし、1月1日を迎えるごとに1歳増える数え方です。</li>
+                            <li>2月29日生まれの場合、うるう年ではない年は2月28日を誕生日相当日として計算します。</li>
                         </ul>
                     </div>
                 </section>
