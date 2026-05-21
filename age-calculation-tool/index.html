@@ -27,8 +27,8 @@
 <body class="d-flex flex-column min-vh-100">
     <header class="navbar navbar-dark bg-brand shadow-sm">
         <div class="container-md d-flex align-items-center">
-            <a href="" class="navbar-brand fw-bold">年齢計算ツール</a>
-            <a href="https://link-hub.rutile3.com/" target="_blank"
+            <a href="./" class="navbar-brand fw-bold">年齢計算ツール</a>
+            <a href="https://link-hub.rutile3.com/" target="_blank" rel="noopener"
                 class="d-flex align-items-center text-decoration-none ms-auto">
                 <span class="text-white-50 small ms-auto">by Rutile3</span>
                 <img src="avatar.png" alt="Avatar" class="avatar ms-2">
@@ -38,13 +38,99 @@
 
     <main class="flex-fill container-md my-4">
         <div class="row g-4">
-            <div class="col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-light fw-semibold">ヘッダー</div>
+            <div class="col-lg-5">
+                <section class="card shadow-sm h-100">
+                    <div class="card-header bg-light fw-semibold">入力</div>
                     <div class="card-body">
-                        <textarea id="input" class="form-control mono" rows="20" placeholder="コンテンツ"></textarea>
+                        <p class="text-muted small mb-4">
+                            生年月日と基準日を入力すると、指定日時点の満年齢・数え年・生後日数・次の誕生日までの日数を計算します。
+                        </p>
+
+                        <form id="ageForm" novalidate>
+                            <div class="mb-3">
+                                <label for="birthDate" class="form-label fw-semibold">生年月日</label>
+                                <input id="birthDate" name="birthDate" type="date" class="form-control" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="targetDate" class="form-label fw-semibold">基準日</label>
+                                <div class="input-group">
+                                    <input id="targetDate" name="targetDate" type="date" class="form-control" required>
+                                    <button id="todayButton" type="button" class="btn btn-outline-secondary">今日</button>
+                                </div>
+                                <div class="form-text">基準日は、ページ表示時に今日の日付が自動設定されます。</div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-sm-flex">
+                                <button id="calculateButton" type="submit" class="btn btn-brand flex-sm-fill">
+                                    計算する
+                                </button>
+                                <button id="clearButton" type="button" class="btn btn-outline-secondary flex-sm-fill">
+                                    クリア
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </div>
+                </section>
+            </div>
+
+            <div class="col-lg-7">
+                <section class="card shadow-sm mb-4" aria-live="polite">
+                    <div class="card-header bg-light fw-semibold">計算結果</div>
+                    <div class="card-body">
+                        <div id="errorArea" class="alert alert-danger d-none" role="alert"></div>
+
+                        <div id="emptyState" class="empty-state text-center py-5">
+                            <div class="empty-state-icon mb-3">🎂</div>
+                            <p class="text-muted mb-0">生年月日を入力して「計算する」ボタンを押してください。</p>
+                        </div>
+
+                        <div id="resultArea" class="d-none">
+                            <div class="mb-3 text-muted small">
+                                <span id="conditionText"></span>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-sm-6">
+                                    <div class="result-card">
+                                        <div class="result-label">満年齢</div>
+                                        <div id="fullAgeResult" class="result-value"></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="result-card">
+                                        <div class="result-label">数え年</div>
+                                        <div id="countedAgeResult" class="result-value"></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="result-card">
+                                        <div class="result-label">生後日数</div>
+                                        <div id="daysSinceBirthResult" class="result-value"></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="result-card">
+                                        <div class="result-label">次の誕生日までの日数</div>
+                                        <div id="daysUntilBirthdayResult" class="result-value"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card shadow-sm">
+                    <div class="card-header bg-light fw-semibold">補足</div>
+                    <div class="card-body small">
+                        <ul class="mb-0">
+                            <li>満年齢は、誕生日を迎えるごとに1歳増える数え方です。</li>
+                            <li>数え年は、生まれた年を1歳とし、年が変わるごとに1歳増える数え方です。</li>
+                            <li>2月29日生まれの場合、うるう年ではない年の誕生日相当日は2月28日として計算します。</li>
+                            <li>入力された生年月日は保存されず、計算はブラウザ内で完結します。</li>
+                        </ul>
+                    </div>
+                </section>
             </div>
         </div>
     </main>
@@ -55,10 +141,7 @@
         </div>
     </footer>
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <script src="app.js"></script> -->
+    <script src="app.js"></script>
 </body>
 
 </html>

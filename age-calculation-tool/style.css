@@ -1,9 +1,27 @@
 :root {
-    --brand: rgba(219, 169, 39, .8);
+    --brand: rgba(219, 169, 39, .9);
+    --brand-dark: rgb(172, 126, 23);
+    --surface: #ffffff;
+    --surface-muted: #f8f9fa;
+    --border: #dee2e6;
+    --text-muted: #6c757d;
 }
 
 .bg-brand {
     background: var(--brand);
+}
+
+.btn-brand {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--brand-dark);
+    --bs-btn-border-color: var(--brand-dark);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgb(145, 105, 18);
+    --bs-btn-hover-border-color: rgb(145, 105, 18);
+    --bs-btn-focus-shadow-rgb: 172, 126, 23;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: rgb(126, 91, 15);
+    --bs-btn-active-border-color: rgb(126, 91, 15);
 }
 
 .avatar {
@@ -23,4 +41,80 @@ body {
 
 .small {
     font-size: .9rem;
+}
+
+.empty-state {
+    border: 1px dashed var(--border);
+    border-radius: .75rem;
+    background: var(--surface-muted);
+}
+
+.empty-state-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.result-card {
+    height: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    background: var(--surface);
+}
+
+.result-label {
+    margin-bottom: .35rem;
+    color: var(--text-muted);
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+.result-value {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.25;
+    word-break: keep-all;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --surface: #212529;
+        --surface-muted: #2b3035;
+        --border: #495057;
+        --text-muted: #adb5bd;
+    }
+
+    body {
+        background: #15171a;
+        color: #f8f9fa;
+    }
+
+    .card,
+    .result-card,
+    .empty-state {
+        background-color: var(--surface);
+        color: #f8f9fa;
+    }
+
+    .card-header.bg-light {
+        background-color: #2b3035 !important;
+        color: #f8f9fa;
+    }
+
+    .form-control,
+    .input-group-text {
+        background-color: #212529;
+        border-color: #495057;
+        color: #f8f9fa;
+    }
+
+    .form-control:focus {
+        background-color: #212529;
+        color: #f8f9fa;
+    }
+
+    .form-text,
+    .text-muted {
+        color: #adb5bd !important;
+    }
 }
