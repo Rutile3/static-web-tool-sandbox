@@ -1,6 +1,5 @@
 :root {
-    --brand: rgba(219, 169, 39, .9);
-    --brand-dark: rgb(172, 126, 23);
+    --brand: rgba(219, 169, 39, 0.8);
     --surface: #ffffff;
     --surface-muted: #f8f9fa;
     --border: #dee2e6;
@@ -9,19 +8,6 @@
 
 .bg-brand {
     background: var(--brand);
-}
-
-.btn-brand {
-    --bs-btn-color: #fff;
-    --bs-btn-bg: var(--brand-dark);
-    --bs-btn-border-color: var(--brand-dark);
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: rgb(145, 105, 18);
-    --bs-btn-hover-border-color: rgb(145, 105, 18);
-    --bs-btn-focus-shadow-rgb: 172, 126, 23;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: rgb(126, 91, 15);
-    --bs-btn-active-border-color: rgb(126, 91, 15);
 }
 
 .avatar {
