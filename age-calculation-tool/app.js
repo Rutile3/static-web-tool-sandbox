@@ -256,8 +256,16 @@
     }
 
     function renderErrors(errors) {
-        const listItems = errors.map((error) => `<li>${escapeHtml(error)}</li>`).join('');
-        elements.errorArea.innerHTML = `<ul class="mb-0">${listItems}</ul>`;
+        const list = document.createElement('ul');
+        list.className = 'mb-0';
+
+        errors.forEach((error) => {
+            const item = document.createElement('li');
+            item.textContent = error;
+            list.appendChild(item);
+        });
+
+        elements.errorArea.replaceChildren(list);
         elements.errorArea.classList.remove('d-none');
     }
 
@@ -277,20 +285,6 @@
         hideErrors();
         hideResult();
         elements.birthDate.focus();
-    }
-
-    function escapeHtml(value) {
-        return String(value).replace(/[&<>"']/g, (char) => {
-            const entities = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;',
-            };
-
-            return entities[char];
-        });
     }
 
     // 簡易テストやデバッグで使えるよう、計算ロジックのみ公開する。
